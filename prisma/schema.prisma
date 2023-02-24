@@ -64,6 +64,7 @@ model courses {
   id_guilds   Int
   config      config[]
   roles       roles    @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_roles_fk")
+  guilds      guilds?  @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_guilds_fk")
   promo       promo[]
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
@@ -78,6 +79,7 @@ model guilds {
   channels    channels[]
   created_at  DateTime     @default(now())
   updated_at  DateTime     @updatedAt
+  courses     courses[]
 }
 
 model inclure {

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Prisma, guilds } from '@prisma/client';
 import { CreateGuildDto } from './dto/create-guild.dto';
@@ -40,5 +40,41 @@ export class GuildsService {
     });
   }
 
-  async createGuilds(createGuildDto: CreateGuildDto) {}
+  async createGuilds(createGuildDto: CreateGuildDto) {
+    const guilds = this.findOne({
+      guild_uuid: createGuildDto.guild_uuid,
+    });
+
+    if (guilds) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Guilds already exist',
+      };
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: this.create({
+        ...createGuildDto,
+      }),
+    };
+  }
+
+  async getGuildByUUID(uuid: number) {
+    const guild = this.findOne({
+      guild_uuid: uuid,
+    });
+
+    if (!guild) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Guild not exist',
+      };
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: guild,
+    };
+  }
 }
