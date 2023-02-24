@@ -12,6 +12,11 @@ export class UsersService {
     });
   }
 
+  getUserByPromoId(usersWhereInput: Prisma.usersWhereInput) {
+    return this.prisma.users.findMany({
+      where: usersWhereInput,
+    });
+  }
   findAll(): Promise<users[]> {
     return this.prisma.users.findMany();
   }

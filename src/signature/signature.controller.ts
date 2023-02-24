@@ -30,6 +30,10 @@ export class SignatureController {
     return this.signatureService.findOne(+id);
   }
 
+  @Get('/find/promo/:id')
+  geyPromoByUserId(@Param('id') id: string) {
+    return this.signatureService.getUsersByPromoId(+id);
+  }
   @Patch(':id')
   update(
     @Param('id') id: string,
