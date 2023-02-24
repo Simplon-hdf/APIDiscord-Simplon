@@ -61,9 +61,9 @@ model courses {
   id          Int      @id(map: "courses_pk") @default(autoincrement())
   course_name String   @db.VarChar(255)
   id_roles    Int
+  id_guilds   Int
   config      config[]
   roles       roles    @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_roles_fk")
-  guilds      guilds[]
   promo       promo[]
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
@@ -74,10 +74,8 @@ model guilds {
   guild_uuid  Int
   guild_name  String       @db.VarChar(50)
   member_size Int
-  id_courses  Int
   appartenir  appartenir[]
   channels    channels[]
-  courses     courses      @relation(fields: [id_courses], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "guilds_courses_fk")
   created_at  DateTime     @default(now())
   updated_at  DateTime     @updatedAt
 }
