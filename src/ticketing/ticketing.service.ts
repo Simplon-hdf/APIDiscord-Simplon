@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, ticket } from '@prisma/client';
+import { messages, Prisma, ticket } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
-import { CreateTicketingDto } from './dto/create-ticketing.dto';
+import { CreateTicketingDto } from './dto/create-ticket.dto';
+import { registerMessage } from './dto/register-message.dto';
 
 @Injectable()
 export class TicketingService {
@@ -11,7 +12,6 @@ export class TicketingService {
     return this.prisma.ticket.create({ data });
   }
 
-  
 
   // async createTicket(TicketDto: CreateTicketingDto) {
   //   const newTicket = this.registerTicket({
@@ -35,4 +35,21 @@ export class TicketingService {
 
   //   return newTicket;
   // }
+
+  // async create(data: Prisma.messagesCreateInput): Promise<messages> {
+  //   return this.prisma.messages.create({ data });
+  // }
+
+  // async registerMessage(registerMessageDto: registerMessage){
+
+
+
+  //   return await this.create({
+  //     ...registerMessageDto,
+  //     message_uuid: 1,
+  //     users: 
+  //   })
+
+  // }
+
 }
