@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNotEmpty, IsString, Length } from 'class-validator';
 
-export class CreateTicketingDto {
+export class CreateTicketDto {
     @ApiProperty()
     @IsNotEmpty({ message: 'The ticket should have a tag' })
     @IsString()
