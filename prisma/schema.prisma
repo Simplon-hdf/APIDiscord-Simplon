@@ -112,15 +112,16 @@ model messages {
 }
 
 model promo {
-  id          Int      @id(map: "promo_pk") @default(autoincrement())
-  promo_state Boolean
-  id_courses  Int
-  id_roles    Int
-  courses     courses  @relation(fields: [id_courses], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "promo_courses_fk")
-  roles       roles    @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "promo_roles0_fk")
-  users       users[]
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  id           Int      @id(map: "promo_pk") @default(autoincrement())
+  promo_state  Boolean
+  code_request Boolean  @default(true)
+  id_courses   Int
+  id_roles     Int
+  courses      courses  @relation(fields: [id_courses], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "promo_courses_fk")
+  roles        roles    @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "promo_roles0_fk")
+  users        users[]
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 }
 
 model resources_sharing {
@@ -149,9 +150,15 @@ model roles {
 }
 
 model signature {
-  id         Int      @id(map: "signature_pk") @default(autoincrement())
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id               Int      @id(map: "signature_pk") @default(autoincrement())
+  learner          users    @relation(fields: [id_learner], references: [id], map: "signature_user_pk", name: "learner")
+  id_learner       Int?
+  trainer_notifier users    @relation(fields: [id_trainer], references: [id], map: "signature_user_notifier_pk", name: "trainer")
+  id_trainer       Int?
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+  users            users?   @relation(fields: [usersId], references: [id])
+  usersId          Int?
 }
 
 model template {
@@ -192,4 +199,7 @@ model users {
   roles             roles               @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_roles_fk")
   created_at        DateTime            @default(now())
   updated_at        DateTime            @updatedAt
+  signature         signature[]
+  signature         signature[]
+  signature         signature[]
 }
