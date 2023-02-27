@@ -151,14 +151,12 @@ model roles {
 
 model signature {
   id               Int      @id(map: "signature_pk") @default(autoincrement())
-  learner          users    @relation(fields: [id_learner], references: [id], map: "signature_user_pk", name: "learner")
   id_learner       Int?
-  trainer_notifier users    @relation(fields: [id_trainer], references: [id], map: "signature_user_notifier_pk", name: "trainer")
+  learner          users?   @relation(fields: [id_learner], references: [id], name: "learner", map: "learner_pk")
   id_trainer       Int?
+  trainer_notifier users?   @relation(fields: [id_trainer], references: [id], name: "trainer", map: "trainer_pk")
   created_at       DateTime @default(now())
   updated_at       DateTime @updatedAt
-  users            users?   @relation(fields: [usersId], references: [id])
-  usersId          Int?
 }
 
 model template {
@@ -199,7 +197,6 @@ model users {
   roles             roles               @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_roles_fk")
   created_at        DateTime            @default(now())
   updated_at        DateTime            @updatedAt
-  signature         signature[]
-  signature         signature[]
-  signature         signature[]
+  signature_trainer signature[]         @relation("learner")
+  signature_learner signature[]         @relation("trainer")
 }
