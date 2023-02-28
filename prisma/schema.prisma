@@ -27,7 +27,7 @@ model associer {
 
 model category {
   id            Int        @id(map: "category_pk") @default(autoincrement())
-  category_uuid String     @db.VarChar(255)
+  category_uuid BigInt
   category_name String     @db.VarChar(255)
   channels      channels[]
   template      template[]
@@ -38,7 +38,7 @@ model category {
 model channels {
   id                Int                 @id(map: "channels_pk") @default(autoincrement())
   channel_name      String              @db.VarChar(255)
-  channel_uuid      Int
+  channel_uuid      BigInt
   id_guilds         Int
   id_category       Int
   associer          associer[]
@@ -72,7 +72,7 @@ model courses {
 
 model guilds {
   id          Int          @id(map: "guilds_pk") @default(autoincrement())
-  guild_uuid  Int
+  guild_uuid  BigInt
   guild_name  String       @db.VarChar(50)
   member_size Int
   appartenir  appartenir[]
@@ -100,7 +100,7 @@ model link {
 
 model messages {
   id              Int       @id(map: "messages_pk") @default(autoincrement())
-  message_uuid    Int
+  message_uuid    BigInt
   message_content String    @db.VarChar(255)
   tag             String?   @db.VarChar(50)
   id_users        Int
@@ -138,7 +138,7 @@ model resources_sharing {
 
 model roles {
   id         Int       @id(map: "roles_pk") @default(autoincrement())
-  role_uuid  Int
+  role_uuid  BigInt
   role_name  String    @db.VarChar(255)
   role_color String    @db.VarChar(20)
   courses    courses[]
@@ -186,7 +186,7 @@ model users {
   id                Int                 @id(map: "users_pk") @default(autoincrement())
   username          String              @db.VarChar(255)
   mail              String              @db.VarChar(255)
-  user_uuid         Int
+  user_uuid         BigInt
   id_roles          Int
   id_promo          Int?
   appartenir        appartenir[]
