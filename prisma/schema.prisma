@@ -112,16 +112,16 @@ model messages {
 }
 
 model promo {
-  id           Int      @id(map: "promo_pk") @default(autoincrement())
+  id           Int          @id(map: "promo_pk") @default(autoincrement())
   promo_state  Boolean
-  code_request Boolean  @default(true)
+  code_request Boolean      @default(true)
   id_courses   Int
   id_roles     Int
-  courses      courses  @relation(fields: [id_courses], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "promo_courses_fk")
-  roles        roles    @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "promo_roles0_fk")
-  users        users[]
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  courses      courses      @relation(fields: [id_courses], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "promo_courses_fk")
+  roles        roles        @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "promo_roles0_fk")
+  created_at   DateTime     @default(now())
+  updated_at   DateTime     @updatedAt
+  Participer   Participer[]
 }
 
 model resources_sharing {
@@ -193,10 +193,21 @@ model users {
   messages          messages[]
   resources_sharing resources_sharing[]
   ticket            ticket[]
-  promo             promo?              @relation(fields: [id_promo], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_promo0_fk")
   roles             roles               @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_roles_fk")
   created_at        DateTime            @default(now())
   updated_at        DateTime            @updatedAt
   signature_trainer signature[]         @relation("learner")
   signature_learner signature[]         @relation("trainer")
+  Participer        Participer[]
+}
+
+model Participer {
+  id       Int
+  id_promo Int
+
+  user  users @relation(fields: [id], references: [id])
+  promo promo @relation(fields: [id_promo], references: [id])
+
+  @@id([id, id_promo])
+  @@map("Participer")
 }
