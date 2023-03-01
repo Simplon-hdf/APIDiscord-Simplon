@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { messages, Prisma, ticket } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
-import { CreateTicketDto } from './dto/create-ticket.dto';
+import { RegisterTicketDto } from './dto/register-ticket.dto';
 import { registerMessageDto } from './dto/register-message.dto';
+import { UpdateTicketDto } from './dto/update-ticket.dto';
 
 @Injectable()
 export class TicketingService {
@@ -32,21 +33,25 @@ export class TicketingService {
     return this.updateMessageById({ message_uuid });
   }
 
+  updateTicketStatusById(data: Prisma.ticketWhereInput, ticket_id: number) {
+    return this.updateTicketById(data, ticket_id);
+  }
+
   // Functions
 
-  async createTicket(TicketDto: CreateTicketDto) {
+  async createTicket(RegisterTicketDto: RegisterTicketDto) {
     try {
       const roles = await this.prisma.roles.findFirstOrThrow({
-        where: { role_uuid: TicketDto.role_uuid },
+        where: { role_uuid: RegisterTicketDto.role_uuid },
       });
 
       const user = await this.prisma.users.findFirstOrThrow({
-        where: { user_uuid: TicketDto.user_uuid },
+        where: { user_uuid: RegisterTicketDto.user_uuid },
       });
 
       const newTicket = this.registerTicket({
-        ticket_state: TicketDto.ticket_state,
-        ticket_tag: TicketDto.ticket_tag,
+        ticket_state: RegisterTicketDto.ticket_state,
+        ticket_tag: RegisterTicketDto.ticket_tag,
         roles: {
           connect: {
             id: roles.id,
@@ -188,6 +193,34 @@ export class TicketingService {
         return {
           statusCode: 404,
           message: 'Message not found',
+        };
+      }
+    }
+  }
+  async updateTicketById(ticketWhereInput: Prisma.ticketWhereInput, ticket_id: number) {
+
+    try {
+
+      const updateTicket = await this.prisma.ticket.update({
+        where: {
+          id: Number(ticket_id),
+        },
+        data:{
+          ticket_state: String(ticketWhereInput.ticket_state)
+        }
+      });
+
+      return {
+        statusCode: 200,
+        data: updateTicket,
+      };
+    } catch (err) {
+      if (err.name != 'NotFoundError') {
+        return err;
+      } else {
+        return {
+          statusCode: 404,
+          message: 'Ticket not found',
         };
       }
     }

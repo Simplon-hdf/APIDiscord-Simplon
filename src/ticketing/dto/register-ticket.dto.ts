@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, Length } from 'class-validator';
 
-export class CreateTicketDto {
+export class RegisterTicketDto {
 
     @ApiProperty()
     @IsNotEmpty({ message: 'The ticket should have a user uuid' })
