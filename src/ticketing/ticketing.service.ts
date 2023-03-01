@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, ticket } from '@prisma/client';
+import { messages, Prisma, ticket } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
-import { registerMessage } from './dto/register-message.dto';
+import { registerMessageDto } from './dto/register-message.dto';
+
 
 @Injectable()
 export class TicketingService {
@@ -11,46 +12,128 @@ export class TicketingService {
   registerTicket(data: Prisma.ticketCreateInput): Promise<ticket> {
     return this.prisma.ticket.create({
       data,
-    })
+    });
   }
 
+  registerMessage(data: Prisma.messagesCreateInput): Promise<messages> {
+    return this.prisma.messages.create({
+      data,
+    });
+  }
+
+  findTicketById(id: number) {
+    return this.getTicketByTicketId({ id });
+  }
+
+  findMessageByTIcketId(id: number){
+    return this.getMessagesByTicketId({ id })
+  }
+
+  // Functions
+
   async createTicket(TicketDto: CreateTicketDto) {
-    const newTicket = this.registerTicket({
-      ...TicketDto,
-      messages: {
-        connect: {
-          id: 1
-        }
-      },
-      roles: {
-        connect: {
-          id: 1,
+    try {
+
+      const roles = await this.prisma.roles.findFirstOrThrow({
+        where: { role_uuid: TicketDto.role_uuid },
+      });
+
+      const user = await this.prisma.users.findFirstOrThrow({
+        where: { user_uuid: TicketDto.user_uuid },
+      });
+
+
+      const newTicket = this.registerTicket({
+        ...TicketDto,
+        roles: {
+          connect: {
+            id: roles.id,
+          },
         },
-      },
+        users: {
+          connect: {
+            id: user.id,
+          },
+        },
+      });
+
+      return newTicket;
+      
+    } catch (err) {
+      console.log(err)
+      // if (err.name != 'NotFoundError') {
+      //   return err;
+      // } else {
+      //   return 'The ticket could not be created please check the input fields';
+      // }
+    }
+  }
+
+  async createNewMessage(
+    registerMessageDto: registerMessageDto,
+    ticketId: number,
+  ) {
+    const ticket = await this.findTicketById(ticketId);
+
+    const message = this.registerMessage({
+      ...registerMessageDto,
+      message_uuid: registerMessageDto.message_uuid,
+      message_content: registerMessageDto.message_content,
       users: {
         connect: {
-          id: 1,
+          id: ticket.id_users,
+        },
+      },
+      ticket: {
+        connect: {
+          id: ticket.id,
         },
       },
     });
 
-    return newTicket;
+    return message;
   }
 
-  // async create(data: Prisma.messagesCreateInput): Promise<messages> {
-  //   return this.prisma.messages.create({ data });
-  // }
+  async getTicketByTicketId(ticketWhereInput: Prisma.ticketWhereInput) {
+    try {
+      const ticket = await this.prisma.ticket.findFirstOrThrow({
+        where: { id: Number(ticketWhereInput.id) },
+      });
 
-  // async registerMessage(registerMessageDto: registerMessage){
+      return ticket;
+    } catch (err) {
+      if (err.name != 'NotFoundError') {
+        return err;
+      } else {
+        return 'Ticket not found';
+      }
+    }
+  }
+
+  async getMessagesByTicketId(ticketWhereInput: Prisma.ticketWhereInput) {
+
+    try { 
+
+      const messages = await this.prisma.messages.findMany({ 
+
+        where: {
+          ticket:{
+            id: Number(ticketWhereInput.id)
+          }
+        }
+
+      })
+
+      console.log(messages)
 
 
+    }catch(err){
+      if (err.name != 'NotFoundError') {
+        return err;
+      } else {
+        return 'Ticket not found';
+      }
+    }
 
-  //   return await this.create({
-  //     ...registerMessageDto,
-  //     message_uuid: 1,
-  //     users: 
-  //   })
-
-  // }
-
+  }
 }
