@@ -1,31 +1,14 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { TicketingService } from './ticketing.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
-import { UpdateTicketingDto } from './dto/update-ticketing.dto';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { registerMessageDto } from './dto/register-message.dto';
+import { UpdateMessageDto } from './dto/update-message.dto';
 
 @Controller('ticket')
 @ApiTags('Ticketing')
 export class TicketingController {
   constructor(private readonly ticketingService: TicketingService) {}
-
-  // @Post('ticket/message')
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'message as registered !',
-  // })
-  // register(@Body() registerMessageDto: registerMessage) {
-  //   return this.ticketingService.registerMessage(registerMessageDto);
-  // }
 
   @Post()
   @ApiResponse({
@@ -45,14 +28,25 @@ export class TicketingController {
     return this.ticketingService.findTicketById(id);
   }
 
-  @Post(':ticket_id/messages/new')
+  @Post(':ticket_id/message/new')
   @ApiResponse({
     status: 200,
     description: 'message has been found',
   })
-  registerMessage(@Param('ticket_id') ticketId: number, @Body() registerMessageDto: registerMessageDto
+  registerMessage(
+    @Param('ticket_id') ticketId: number,
+    @Body() registerMessageDto: registerMessageDto,
   ) {
     return this.ticketingService.createNewMessage(registerMessageDto, ticketId);
+  }
+
+  @Post('message/update')
+  @ApiResponse({
+    status: 200,
+    description: 'ticket as been created !',
+  })
+  updateMessageByIsId(@Body() UpdateMessageDto: UpdateMessageDto) {
+    return this.ticketingService.updateMessageById(UpdateMessageDto);
   }
 
   @Get(':ticket_id/messages')
@@ -61,6 +55,6 @@ export class TicketingController {
     description: 'messages as been found !',
   })
   findMessagesByTicketId(@Param('ticket_id') id: number) {
-    return this.ticketingService.findMessageByTIcketId(id);
+    return this.ticketingService.findMessageByTicketId(id);
   }
 }
