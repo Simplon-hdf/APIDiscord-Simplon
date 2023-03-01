@@ -5,8 +5,8 @@ export class registerMessageDto {
 
     @ApiProperty()
     @IsNotEmpty({ message: 'The message of ticket should have a uuid' })
-    @IsNumber()
-    message_uuid: bigint;
+    @IsString()
+    message_uuid: string;
 
     @ApiProperty()
     @IsNotEmpty({ message: 'The message of ticket should have a content' })

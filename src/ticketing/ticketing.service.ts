@@ -116,16 +116,14 @@ export class TicketingService {
 
       const messages = await this.prisma.messages.findMany({ 
 
-        where: {
-          ticket:{
-            id: Number(ticketWhereInput.id)
+        where: { 
+          users: {
+            id: 1
           }
-        }
-
+         }
       })
 
-      console.log(messages)
-
+      return messages;
 
     }catch(err){
       if (err.name != 'NotFoundError') {

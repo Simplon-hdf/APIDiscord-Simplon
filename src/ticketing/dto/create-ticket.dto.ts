@@ -1,15 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, isNumber, IsNumber, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsString, Length } from 'class-validator';
 
 export class CreateTicketDto {
 
     @ApiProperty()
     @IsNotEmpty({ message: 'The ticket should have a state' })
-    user_uuid: bigint;
+    @IsString()
+    user_uuid: string;
 
     @ApiProperty()
     @IsNotEmpty({ message: 'The ticket should have a role uuid' })
-    role_uuid: bigint;
+    @IsString()
+    role_uuid: string;
 
     @ApiProperty()
     @IsNotEmpty({ message: 'The ticket should have a tag' })

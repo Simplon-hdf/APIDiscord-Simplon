@@ -6,7 +6,7 @@ export class CreateUserDto {
     @ApiProperty()
     @IsNotEmpty({ message: 'The user should have a id' })
     @IsString()
-    uuid: number;
+    uuid: string;
 
     @ApiProperty()
     @IsNotEmpty({ message: 'The user should have a username' })
