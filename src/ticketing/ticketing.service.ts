@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { messages, Prisma, roles, ticket, users } from '@prisma/client';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { messages, Prisma, ticket } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { registerMessageDto } from './dto/register-message.dto';
@@ -58,7 +58,10 @@ export class TicketingService {
         },
       }); 
 
-      return newTicket;
+      return{
+        statusCOde: 200,
+        data: newTicket
+      };
       
     } catch (err) {
       console.log(err)
@@ -74,25 +77,41 @@ export class TicketingService {
     registerMessageDto: registerMessageDto,
     ticketId: number,
   ) {
-    const ticket = await this.findTicketById(ticketId);
+    try {
 
-    const message = this.registerMessage({
-      ...registerMessageDto,
-      message_uuid: registerMessageDto.message_uuid,
-      message_content: registerMessageDto.message_content,
-      users: {
-        connect: {
-          id: ticket.id_users,
-        },
-      },
-      ticket: {
-        connect: {
-          id: ticket.id,
-        },
-      },
-    });
+      const ticket = await this.findTicketById(ticketId);
 
-    return message;
+      const message = this.registerMessage({
+        ...registerMessageDto,
+        message_uuid: registerMessageDto.message_uuid,
+        message_content: registerMessageDto.message_content,
+        users: {
+          connect: {
+            id: ticket.id_users,
+          },
+        },
+        ticket: {
+          connect: {
+            id: ticket.id,
+          },
+        },
+      });
+  
+      return {
+        statusCode: 200,
+        data: message
+      };
+
+    } catch(err){
+      if (err.name != 'NotFoundError') {
+        return err;
+      } else {
+        return {
+          statusCode: 404,
+          message: "Ticket was not found for save message"
+        };
+      }
+    }
   }
 
   async getTicketByTicketId(ticketWhereInput: Prisma.ticketWhereInput) {
@@ -101,12 +120,18 @@ export class TicketingService {
         where: { id: Number(ticketWhereInput.id) },
       });
 
-      return ticket;
+      return{
+        statusCode: 200,
+        data: ticket
+      };
     } catch (err) {
       if (err.name != 'NotFoundError') {
         return err;
       } else {
-        return 'Ticket not found';
+        return {
+          statusCode: 404,
+          message: "Ticket not found"
+        };
       }
     }
   }
@@ -116,21 +141,26 @@ export class TicketingService {
     try { 
 
       const messages = await this.prisma.messages.findMany({ 
-
         where: { 
-          users: {
-            id: 1
-          }
+          id_ticket: Number(ticketWhereInput.id),
          }
       })
 
-      return messages;
+      // TODO: Handle event for no messages
+
+      return {
+        statusCode: 200,
+        data: messages
+      };
 
     }catch(err){
       if (err.name != 'NotFoundError') {
         return err;
       } else {
-        return 'Ticket not found';
+        return {
+          statusCode: 404,
+          message: "Ticket not found"
+        };
       }
     }
 
