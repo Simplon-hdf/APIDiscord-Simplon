@@ -105,7 +105,7 @@ model messages {
   id_users        Int
   id_ticket       Int?
   inclure         inclure[]
-  ticket          ticket    @relation(fields: [id_ticket], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ticket          ticket?   @relation(fields: [id_ticket], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users           users     @relation(fields: [id_users], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "messages_users_fk")
   created_at      DateTime  @default(now())
   updated_at      DateTime  @updatedAt

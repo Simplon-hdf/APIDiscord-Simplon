@@ -26,7 +26,7 @@ export class GuildsController {
   }
 
   @Get(':uuid')
-  getGuild(@Param() uuid: number) {
+  getGuild(@Param('uuid') uuid: string) {
     return this.guildsService.getGuildByUUID(uuid);
   }
 }

@@ -41,9 +41,11 @@ export class GuildsService {
   }
 
   async createGuilds(createGuildDto: CreateGuildDto) {
-    const guilds = this.findOne({
+    const guilds = await this.findOne({
       guild_uuid: createGuildDto.guild_uuid,
     });
+
+    console.log(guilds);
 
     if (guilds) {
       return {
@@ -54,14 +56,14 @@ export class GuildsService {
 
     return {
       statusCode: HttpStatus.OK,
-      data: this.create({
+      data: await this.create({
         ...createGuildDto,
       }),
     };
   }
 
-  async getGuildByUUID(uuid: number) {
-    const guild = this.findOne({
+  async getGuildByUUID(uuid: string) {
+    const guild = await this.findOne({
       guild_uuid: uuid,
     });
 
