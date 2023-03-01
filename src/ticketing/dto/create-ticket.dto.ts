@@ -4,7 +4,7 @@ import { IsNotEmpty, IsString, Length } from 'class-validator';
 export class CreateTicketDto {
 
     @ApiProperty()
-    @IsNotEmpty({ message: 'The ticket should have a state' })
+    @IsNotEmpty({ message: 'The ticket should have a user uuid' })
     @IsString()
     user_uuid: string;
 

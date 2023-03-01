@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { messages, Prisma, ticket } from '@prisma/client';
+import { messages, Prisma, roles, ticket, users } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { registerMessageDto } from './dto/register-message.dto';
@@ -32,6 +32,7 @@ export class TicketingService {
   // Functions
 
   async createTicket(TicketDto: CreateTicketDto) {
+
     try {
 
       const roles = await this.prisma.roles.findFirstOrThrow({
@@ -42,9 +43,9 @@ export class TicketingService {
         where: { user_uuid: TicketDto.user_uuid },
       });
 
-
       const newTicket = this.registerTicket({
-        ...TicketDto,
+        ticket_state: TicketDto.ticket_state,
+        ticket_tag: TicketDto.ticket_tag,
         roles: {
           connect: {
             id: roles.id,
@@ -55,17 +56,17 @@ export class TicketingService {
             id: user.id,
           },
         },
-      });
+      }); 
 
       return newTicket;
       
     } catch (err) {
       console.log(err)
-      // if (err.name != 'NotFoundError') {
-      //   return err;
-      // } else {
-      //   return 'The ticket could not be created please check the input fields';
-      // }
+      if (err.name != 'NotFoundError') {
+        return err;
+      } else {
+        return 'The ticket could not be created please check the input fields';
+      }
     }
   }
 
