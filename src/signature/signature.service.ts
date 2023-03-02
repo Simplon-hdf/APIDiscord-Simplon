@@ -4,8 +4,6 @@ import { UpdateSignatureDto } from './dto/update-signature.dto';
 import { PrismaService } from '../prisma.service';
 import { UsersService } from '../users/users.service';
 import { Prisma } from '@prisma/client';
-import { User } from '../users/entities/user.entity';
-import { HttpStatusCode } from 'axios';
 
 @Injectable()
 export class SignatureService {
@@ -44,6 +42,13 @@ export class SignatureService {
   getPromoById(promoWhereUniqueInput: Prisma.promoWhereUniqueInput) {
     return this.prisma.promo.findUnique({
       where: promoWhereUniqueInput,
+      include: {
+        roles: {
+          select: {
+            role_name: true,
+          },
+        },
+      },
     });
   }
 
