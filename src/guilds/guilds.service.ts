@@ -45,9 +45,7 @@ export class GuildsService {
       guild_uuid: createGuildDto.guild_uuid,
     });
 
-    console.log(guilds);
-
-    if (guilds) {
+    if (guilds !== null) {
       return {
         statusCode: HttpStatus.CONFLICT,
         error: 'Guilds already exist',
@@ -67,7 +65,7 @@ export class GuildsService {
       guild_uuid: uuid,
     });
 
-    if (!guild) {
+    if (guild === null) {
       return {
         statusCode: HttpStatus.CONFLICT,
         error: 'Guild not exist',
