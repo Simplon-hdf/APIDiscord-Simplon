@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, users } from '@prisma/client';
+import { Participer, Prisma, users } from '@prisma/client';
 import { PrismaService } from '../prisma.service';
 
 @Injectable()
@@ -12,11 +12,30 @@ export class UsersService {
     });
   }
 
+  Participer(data: Prisma.ParticiperWhereInput): Promise<Participer[]> {
+    return this.prisma.participer.findMany({
+      where: data,
+    });
+  }
+
   getUserByPromoId(usersWhereInput: Prisma.usersWhereInput) {
     return this.prisma.users.findMany({
       where: usersWhereInput,
     });
   }
+
+  getUserbyUUID(uuid: string) {
+    return this.findOne({
+      user_uuid: uuid,
+    });
+  }
+
+  getUserPromo(user: users) {
+    return this.Participer({
+      user,
+    });
+  }
+
   findAll(): Promise<users[]> {
     return this.prisma.users.findMany();
   }

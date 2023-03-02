@@ -10,7 +10,8 @@ import {
 import { SignatureService } from './signature.service';
 import { CreateSignatureDto } from './dto/create-signature.dto';
 import { UpdateSignatureDto } from './dto/update-signature.dto';
-
+import { User } from '../users/entities/user.entity';
+0;
 @Controller('signature')
 export class SignatureController {
   constructor(private readonly signatureService: SignatureService) {}
@@ -31,8 +32,13 @@ export class SignatureController {
   }
 
   @Get('/find/promo/:id')
-  geyPromoByUserId(@Param('id') id: string) {
+  getPromoByUserId(@Param('id') id: string) {
     return this.signatureService.getUsersByPromoId(+id);
+  }
+
+  @Get('find/promo/trainer/:uuid')
+  getPromosByTrainerUuid(@Param('uuid') promoUuid: string) {
+    return this.signatureService.getPromoUuidByTrainerUuid(promoUuid);
   }
 
   @Get('/signature/reportStatus/:promoId')
