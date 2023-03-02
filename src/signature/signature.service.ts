@@ -3,11 +3,16 @@ import { CreateSignatureDto } from './dto/create-signature.dto';
 import { UpdateSignatureDto } from './dto/update-signature.dto';
 import { PrismaService } from '../prisma.service';
 import { UsersService } from '../users/users.service';
-import { Prisma } from '@prisma/client';
+import { courses, guilds, Prisma } from '@prisma/client';
+import { GuildService } from '../guild/guild.service';
 
 @Injectable()
 export class SignatureService {
-  constructor(private prisma: PrismaService, private users: UsersService) {}
+  constructor(
+    private prisma: PrismaService,
+    private users: UsersService,
+    private guild: GuildService,
+  ) {}
 
   create(createSignatureDto: CreateSignatureDto) {
     return `This action adds a new signature ${createSignatureDto}`;
@@ -52,12 +57,20 @@ export class SignatureService {
     });
   }
 
-  getUserByUuid(userWhereUniqueInput: Prisma.usersWhereInput) {
-    return this.prisma.users.findFirst({ where: userWhereUniqueInput });
+  getRoleByUserUuid(userId: string) {
+    return this.prisma.users.findFirst({
+      where: { user_uuid: userId },
+      include: {},
+    });
   }
 
-  getRoleByUserUuid(roleWhereUniqueInput: Prisma.usersWhereInput) {
-    return this.prisma.roles.findFirst({ where: roleWhereUniqueInput });
+  async getRoleByGuildId(guildUuid: string) {
+    const guildId = await this.guild.findOne(guildUuid);
+    const courses = this.getCoursesByGuildId(guildId.id);
+  }
+
+  getCoursesByGuildId(guildId: number): Promise<courses[]> {
+    return this.prisma.courses.findMany({ where: { id_guilds: guildId } });
   }
 
   getUsersByPromoId(promoId: number) {

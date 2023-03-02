@@ -26,6 +26,11 @@ export class SignatureController {
     return this.signatureService.findAll();
   }
 
+  @Get('find/role/guild/:uuid')
+  getTrainerRoleByGuildUuid(uuid: string) {
+    return this.signatureService.getRoleByGuildId(uuid);
+  }
+
   @Get('/find/:id')
   findOne(@Param('id') id: string) {
     return this.signatureService.findById(+id);
@@ -39,6 +44,11 @@ export class SignatureController {
   @Get('find/promo/trainer/:uuid')
   getPromosByTrainerUuid(@Param('uuid') promoUuid: string) {
     return this.signatureService.getPromoUuidByTrainerUuid(promoUuid);
+  }
+
+  @Get('find/role/user/:uuid')
+  getRolesByUserId(@Param('uuid') userId: string) {
+    return this.signatureService.getRoleByUserUuid(userId);
   }
 
   @Get('/signature/reportStatus/:promoId')
