@@ -28,7 +28,9 @@ export class SignatureService {
 
   async getPromoUuidByTrainerUuid(trainerUUID) {
     const trainer = await this.users.getUserbyUUID(trainerUUID);
+
     const promosIds = await this.users.getUserPromo(trainer);
+
     const promos = [];
 
     for (const element of promosIds) {

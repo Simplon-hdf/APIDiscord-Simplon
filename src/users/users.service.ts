@@ -36,8 +36,6 @@ export class UsersService {
     });
   }
 
-  getRoleByUserUuid(userUuid: string) {}
-
   findAll(): Promise<users[]> {
     return this.prisma.users.findMany();
   }
