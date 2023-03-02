@@ -27,7 +27,7 @@ model associer {
 
 model category {
   id            Int        @id(map: "category_pk") @default(autoincrement())
-  category_uuid String     @db.VarChar(255)
+  category_uuid String
   category_name String     @db.VarChar(255)
   channels      channels[]
   template      template[]
@@ -38,7 +38,7 @@ model category {
 model channels {
   id                Int                 @id(map: "channels_pk") @default(autoincrement())
   channel_name      String              @db.VarChar(255)
-  channel_uuid      Int
+  channel_uuid      String
   id_guilds         Int
   id_category       Int
   associer          associer[]
@@ -61,9 +61,10 @@ model courses {
   id          Int      @id(map: "courses_pk") @default(autoincrement())
   course_name String   @db.VarChar(255)
   id_roles    Int
+  id_guilds   Int
   config      config[]
   roles       roles    @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_roles_fk")
-  guilds      guilds[]
+  guilds      guilds?  @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_guilds_fk")
   promo       promo[]
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
@@ -71,15 +72,14 @@ model courses {
 
 model guilds {
   id          Int          @id(map: "guilds_pk") @default(autoincrement())
-  guild_uuid  Int
+  guild_uuid  String
   guild_name  String       @db.VarChar(50)
   member_size Int
-  id_courses  Int
   appartenir  appartenir[]
   channels    channels[]
-  courses     courses      @relation(fields: [id_courses], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "guilds_courses_fk")
   created_at  DateTime     @default(now())
   updated_at  DateTime     @updatedAt
+  courses     courses[]
 }
 
 model inclure {
@@ -100,27 +100,28 @@ model link {
 
 model messages {
   id              Int       @id(map: "messages_pk") @default(autoincrement())
-  message_uuid    Int
+  message_uuid    String
   message_content String    @db.VarChar(255)
-  tag             String?   @db.VarChar(50)
   id_users        Int
+  id_ticket       Int?
   inclure         inclure[]
+  ticket          ticket?   @relation(fields: [id_ticket], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users           users     @relation(fields: [id_users], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "messages_users_fk")
-  ticket          ticket[]
   created_at      DateTime  @default(now())
   updated_at      DateTime  @updatedAt
 }
 
 model promo {
-  id          Int      @id(map: "promo_pk") @default(autoincrement())
-  promo_state Boolean
-  id_courses  Int
-  id_roles    Int
-  courses     courses  @relation(fields: [id_courses], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "promo_courses_fk")
-  roles       roles    @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "promo_roles0_fk")
-  users       users[]
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  id           Int          @id(map: "promo_pk") @default(autoincrement())
+  promo_state  Boolean
+  code_request Boolean      @default(true)
+  id_courses   Int
+  id_roles     Int
+  courses      courses      @relation(fields: [id_courses], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "promo_courses_fk")
+  roles        roles        @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "promo_roles0_fk")
+  created_at   DateTime     @default(now())
+  updated_at   DateTime     @updatedAt
+  Participer   Participer[]
 }
 
 model resources_sharing {
@@ -137,7 +138,7 @@ model resources_sharing {
 
 model roles {
   id         Int       @id(map: "roles_pk") @default(autoincrement())
-  role_uuid  Int
+  role_uuid  String
   role_name  String    @db.VarChar(255)
   role_color String    @db.VarChar(20)
   courses    courses[]
@@ -149,9 +150,13 @@ model roles {
 }
 
 model signature {
-  id         Int      @id(map: "signature_pk") @default(autoincrement())
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id               Int      @id(map: "signature_pk") @default(autoincrement())
+  id_learner       Int?
+  learner          users?   @relation(fields: [id_learner], references: [id], name: "learner", map: "learner_pk")
+  id_trainer       Int?
+  trainer_notifier users?   @relation(fields: [id_trainer], references: [id], name: "trainer", map: "trainer_pk")
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
 }
 
 model template {
@@ -164,32 +169,45 @@ model template {
 }
 
 model ticket {
-  id           Int      @id(map: "ticket_pk") @default(autoincrement())
-  ticket_tag   String   @db.VarChar(255)
+  id           Int        @id(map: "ticket_pk") @default(autoincrement())
+  ticket_tag   String     @db.VarChar(255)
   ticket_state Boolean
-  id_messages  Int
   id_roles     Int
   id_users     Int
-  messages     messages @relation(fields: [id_messages], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ticket_messages_fk")
-  roles        roles    @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ticket_roles0_fk")
-  users        users    @relation(fields: [id_users], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ticket_users1_fk")
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  id_messages  Int?
+  roles        roles      @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ticket_roles0_fk")
+  users        users      @relation(fields: [id_users], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ticket_users1_fk")
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
+  messages     messages[]
 }
 
 model users {
   id                Int                 @id(map: "users_pk") @default(autoincrement())
   username          String              @db.VarChar(255)
   mail              String              @db.VarChar(255)
-  user_uuid         Int
+  user_uuid         String
   id_roles          Int
   id_promo          Int?
   appartenir        appartenir[]
   messages          messages[]
   resources_sharing resources_sharing[]
   ticket            ticket[]
-  promo             promo?              @relation(fields: [id_promo], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_promo0_fk")
   roles             roles               @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_roles_fk")
   created_at        DateTime            @default(now())
   updated_at        DateTime            @updatedAt
+  signature_trainer signature[]         @relation("learner")
+  signature_learner signature[]         @relation("trainer")
+  Participer        Participer[]
+}
+
+model Participer {
+  id       Int
+  id_promo Int
+
+  user  users @relation(fields: [id], references: [id])
+  promo promo @relation(fields: [id_promo], references: [id])
+
+  @@id([id, id_promo])
+  @@map("Participer")
 }
