@@ -1,9 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { messages, Prisma, ticket } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { RegisterTicketDto } from './dto/register-ticket.dto';
 import { registerMessageDto } from './dto/register-message.dto';
-import { UpdateTicketDto } from './dto/update-ticket.dto';
 
 @Injectable()
 export class TicketingService {
