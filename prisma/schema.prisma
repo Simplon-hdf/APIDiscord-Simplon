@@ -40,9 +40,9 @@ model channels {
   channel_name      String              @db.VarChar(255)
   channel_uuid      String
   id_guilds         Int
-  id_category       Int
+  id_category       Int?
   associer          associer[]
-  category          category            @relation(fields: [id_category], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channels_category0_fk")
+  category          category?           @relation(fields: [id_category], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channels_category0_fk")
   guilds            guilds              @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channels_guilds_fk")
   inclure           inclure[]
   resources_sharing resources_sharing[]
