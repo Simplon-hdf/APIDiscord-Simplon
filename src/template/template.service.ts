@@ -31,4 +31,6 @@ export class TemplateService {
       id_category: courseId,
     });
   }
+
+  linkCategoryToTemplate(categoryUUID, createTemplateDto: CreateTemplateDto) {}
 }
