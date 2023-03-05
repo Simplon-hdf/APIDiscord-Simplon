@@ -1,26 +1,67 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
-import { UpdateChannelDto } from './dto/update-channel.dto';
+import { PrismaService } from '../prisma.service';
+import { channels, Prisma } from '@prisma/client';
 
 @Injectable()
 export class ChannelsService {
-  create(createChannelDto: CreateChannelDto) {
-    return 'This action adds a new channel';
+  constructor(private readonly prisma: PrismaService) {}
+
+  create(data: Prisma.channelsCreateInput): Promise<channels> {
+    return this.prisma.channels.create({
+      data,
+    });
   }
 
-  findAll() {
-    return `This action returns all channels`;
+  findOne(channelWhereInput: Prisma.channelsWhereInput): Promise<channels> {
+    return this.prisma.channels.findFirst({
+      where: channelWhereInput,
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} channel`;
-  }
+  async registerChannel(createChannelDto: CreateChannelDto) {
+    const channel = await this.findOne({
+      channel_uuid: createChannelDto.channel_uuid,
+    });
 
-  update(id: number, updateChannelDto: UpdateChannelDto) {
-    return `This action updates a #${id} channel`;
-  }
+    if (channel !== null) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Channel already exist',
+      };
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} channel`;
+    if (!createChannelDto.id_category) {
+      return {
+        statusCode: HttpStatus.OK,
+        data: await this.create({
+          channel_uuid: createChannelDto.channel_uuid,
+          channel_name: createChannelDto.channel_name,
+          guilds: {
+            connect: {
+              id: createChannelDto.id_guilds,
+            },
+          },
+        }),
+      };
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: await this.create({
+        channel_uuid: createChannelDto.channel_uuid,
+        channel_name: createChannelDto.channel_name,
+        guilds: {
+          connect: {
+            id: createChannelDto.id_guilds,
+          },
+        },
+        category: {
+          connect: {
+            id: createChannelDto.id_category,
+          },
+        },
+      }),
+    };
   }
 }
