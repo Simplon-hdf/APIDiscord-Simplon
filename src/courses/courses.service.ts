@@ -41,7 +41,12 @@ export class CoursesService {
         course_name: createCoursesDto.course_name,
         roles: {
           connect: {
-            id: 0,
+            id: createCoursesDto.role_id,
+          },
+        },
+        guilds: {
+          connect: {
+            id: createCoursesDto.guild_id,
           },
         },
       }),
