@@ -48,7 +48,7 @@ export class RolesService {
         role_name: createDtoRole.role_name,
         guilds: {
           connect: {
-            id: createDtoRole.guild_id,
+            id: createDtoRole.guilds_id,
           },
         },
       }),
