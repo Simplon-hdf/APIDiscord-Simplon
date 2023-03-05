@@ -18,7 +18,7 @@ export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
   @Post('register')
-  registerRole(createRoleDto: CreateRoleDto) {
+  registerRole(@Body() createRoleDto: CreateRoleDto) {
     return this.rolesService.registerRole(createRoleDto);
   }
 }
