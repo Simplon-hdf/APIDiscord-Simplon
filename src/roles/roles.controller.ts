@@ -21,4 +21,9 @@ export class RolesController {
   registerRole(@Body() createRoleDto: CreateRoleDto) {
     return this.rolesService.registerRole(createRoleDto);
   }
+
+  @Get('guilds/:uuid')
+  getRolesByGuild(@Param('uuid') uuid: string) {
+    return this.rolesService.getRolesByGuildUUID(uuid);
+  }
 }

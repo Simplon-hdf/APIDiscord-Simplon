@@ -4,12 +4,14 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { PrismaService } from '../prisma.service';
 import { Prisma, roles } from '@prisma/client';
 import { CoursesService } from '../courses/courses.service';
+import { GuildsService } from '../guilds/guilds.service';
 
 @Injectable()
 export class RolesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly courses: CoursesService,
+    private readonly guilds: GuildsService,
   ) {}
 
   create(data: Prisma.rolesCreateInput) {
@@ -26,6 +28,12 @@ export class RolesService {
 
   roles(): Promise<roles[]> {
     return this.prisma.roles.findMany();
+  }
+
+  findMany(roleWhereInput: Prisma.rolesWhereInput): Promise<roles[]> {
+    return this.prisma.roles.findMany({
+      where: roleWhereInput,
+    });
   }
 
   async registerRole(createDtoRole: CreateRoleDto) {
@@ -100,5 +108,19 @@ export class RolesService {
       statusCode: HttpStatus.OK,
       data: role,
     };
+  }
+
+  async getRolesByGuildUUID(uuid: string) {
+    const guild = await this.guilds.getGuildByUUID(uuid);
+
+    if (guild.data === undefined) {
+      return guild;
+    }
+
+    return await this.findMany({
+      guilds: {
+        guild_uuid: uuid,
+      },
+    });
   }
 }
