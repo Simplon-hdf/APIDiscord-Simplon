@@ -10,8 +10,10 @@ import {
 import { GuildsService } from './guilds.service';
 import { CreateGuildDto } from './dto/create-guild.dto';
 import { UpdateGuildDto } from './dto/update-guild.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('guilds')
+@ApiTags('Guilds')
 export class GuildsController {
   constructor(private readonly guildsService: GuildsService) {}
 

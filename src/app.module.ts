@@ -9,9 +9,10 @@ import { CoursesModule } from './courses/courses.module';
 import { TemplateModule } from './template/template.module';
 import { RolesModule } from './roles/roles.module';
 import { ChannelsModule } from './channels/channels.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
-  imports: [UsersModule, GuildsModule, ConfigModule, CoursesModule, TemplateModule, RolesModule, ChannelsModule],
+  imports: [UsersModule, GuildsModule, ConfigModule, CoursesModule, TemplateModule, RolesModule, ChannelsModule, CategoryModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })

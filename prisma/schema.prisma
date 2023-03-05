@@ -27,8 +27,10 @@ model associer {
 
 model category {
   id            Int        @id(map: "category_pk") @default(autoincrement())
+  id_guilds     Int?
   category_uuid String
   category_name String     @db.VarChar(255)
+  guilds        guilds?    @relation(fields: [id_guilds], references: [id], map: "organiser_guilds_fk")
   channels      channels[]
   template      template[]
   created_at    DateTime   @default(now())
@@ -80,6 +82,7 @@ model guilds {
   created_at  DateTime     @default(now())
   updated_at  DateTime     @updatedAt
   courses     courses[]
+  category    category[]
 }
 
 model inclure {
