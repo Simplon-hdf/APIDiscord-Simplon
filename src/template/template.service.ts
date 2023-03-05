@@ -72,11 +72,30 @@ export class TemplateService {
     };
   }
 
-  async getCategoryLinkedToTemplate() {
-    return await this.template({
-      NOT: {
-        id_category: null,
+  async getCategoryLinkedToTemplateByGuild(guildUUID: string) {
+    const template = await this.template({
+      category: {
+        guilds: {
+          guild_uuid: guildUUID,
+        },
+      },
+      AND: {
+        NOT: {
+          id_category: null,
+        },
       },
     });
+
+    if (template === null) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Template not exist for this guild',
+      };
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: template,
+    };
   }
 }
