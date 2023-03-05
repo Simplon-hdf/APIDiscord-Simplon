@@ -22,9 +22,6 @@ export class CoursesController {
     return this.coursesService.createCourse(createCoursesDto);
   }
 
-  @Get('courses')
-  getCourses() {}
-
   @Get('/courses/:id')
   getCourse(@Param('id') id: number) {}
 }

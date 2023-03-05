@@ -83,6 +83,7 @@ model guilds {
   updated_at  DateTime     @updatedAt
   courses     courses[]
   category    category[]
+  roles       roles[]
 }
 
 model inclure {
@@ -144,6 +145,8 @@ model roles {
   role_uuid  String
   role_name  String    @db.VarChar(255)
   role_color String    @db.VarChar(20)
+  id_guilds  Int
+  guilds     guilds    @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "guilds_stock_roles")
   courses    courses[]
   promo      promo[]
   ticket     ticket[]
