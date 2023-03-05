@@ -17,7 +17,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class GuildsController {
   constructor(private readonly guildsService: GuildsService) {}
 
-  @Post('/create')
+  @Post('/register')
   createGuild(@Body() createGuildDto: CreateGuildDto) {
     return this.guildsService.createGuilds(createGuildDto);
   }

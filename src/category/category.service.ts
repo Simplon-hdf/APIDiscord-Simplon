@@ -36,7 +36,35 @@ export class CategoryService {
 
     return {
       statusCode: HttpStatus.OK,
-      data: await this.create({ ...createCategoryDto }),
+      data: await this.create({
+        category_uuid: createCategoryDto.category_uuid,
+        category_name: createCategoryDto.category_name,
+        guilds: {
+          connect: {
+            id: createCategoryDto.guilds_id,
+          },
+        },
+      }),
+    };
+  }
+
+  async getCategoryByGuild(guildUUID: string) {
+    const category = await this.category({
+      guilds: {
+        guild_uuid: guildUUID,
+      },
+    });
+
+    if (category === null) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Guild not exist',
+      };
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: category,
     };
   }
 }
