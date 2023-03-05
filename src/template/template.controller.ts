@@ -22,4 +22,9 @@ export class TemplateController {
   getTemplateCategory(@Param('uuid') uuid: string) {
     return this.templateService.getCategoryLinkedToTemplateByGuild(uuid);
   }
+
+  @Patch('category/link/:uuid')
+  linkCategory(@Param('uuid') uuid: string) {
+    return this.templateService.linkCategoryToTemplate(uuid);
+  }
 }
