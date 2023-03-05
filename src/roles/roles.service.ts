@@ -42,7 +42,16 @@ export class RolesService {
 
     return {
       statusCode: HttpStatus.OK,
-      data: await this.create({ ...createDtoRole }),
+      data: await this.create({
+        role_uuid: createDtoRole.role_uuid,
+        role_color: createDtoRole.role_color,
+        role_name: createDtoRole.role_name,
+        guilds: {
+          connect: {
+            id: createDtoRole.guild_id,
+          },
+        },
+      }),
     };
   }
 
