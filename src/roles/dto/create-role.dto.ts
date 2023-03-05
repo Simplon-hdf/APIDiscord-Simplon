@@ -3,5 +3,5 @@ export class CreateRoleDto {
   role_uuid: string;
   role_color: string;
 
-  guild_id: number;
+  guilds_id: number;
 }
