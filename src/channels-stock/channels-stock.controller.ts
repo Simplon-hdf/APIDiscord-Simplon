@@ -8,6 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { ChannelsStockService } from './channels-stock.service';
+import { UpdateChannelsStockDto } from './dto/update-channels-stock.dto';
 
 @Controller('channels-stock')
 export class ChannelsStockController {
@@ -34,5 +35,10 @@ export class ChannelsStockController {
       statusCode: 200,
       data: channelsStock,
     };
+  }
+
+  @Post('add')
+  addChannelToStock(@Body() updateChannelsStockDto: UpdateChannelsStockDto) {
+    return this.channelsStockService.addChannelToStock(updateChannelsStockDto);
   }
 }

@@ -24,8 +24,11 @@ export class ChannelsStockService {
     });
   }
 
-  async addChannelToStock(guildUUID: string, channelUUID: string) {
-    const channelsStock = await this.getChannelsStockByGuildUUID(guildUUID);
+  async addChannelToStock(updateChannelsStockDto: UpdateChannelsStockDto) {
+    const channelsStock = await this.getChannelsStockByGuildUUID(
+      updateChannelsStockDto.guild_uuid,
+    );
+    console.log(updateChannelsStockDto.guild_uuid);
 
     if (typeof channelsStock === 'string') {
       return {
@@ -36,7 +39,7 @@ export class ChannelsStockService {
 
     const channel = await this.prisma.channels.findFirst({
       where: {
-        channel_uuid: channelUUID,
+        channel_uuid: updateChannelsStockDto.channel_uuid,
       },
     });
 
@@ -83,7 +86,7 @@ export class ChannelsStockService {
       },
     });
 
-    if (!guild) {
+    if (guild === null) {
       return 'Guild is not registered';
     }
 
@@ -93,7 +96,7 @@ export class ChannelsStockService {
       },
     });
 
-    if (!channelsStock) {
+    if (channelsStock === null) {
       return 'Channels stock is not registered';
     }
 
