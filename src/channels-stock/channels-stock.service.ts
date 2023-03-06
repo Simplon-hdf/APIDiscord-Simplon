@@ -4,12 +4,14 @@ import { UpdateChannelsStockDto } from './dto/update-channels-stock.dto';
 import { PrismaService } from '../prisma.service';
 import { channelsStock, Prisma } from '@prisma/client';
 import { CategoryService } from '../category/category.service';
+import { ChannelsService } from '../channels/channels.service';
 
 @Injectable()
 export class ChannelsStockService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly category: CategoryService,
+    private readonly channels: ChannelsService,
   ) {}
 
   create(data: Prisma.channelsStockCreateInput): Promise<channelsStock> {
@@ -22,6 +24,46 @@ export class ChannelsStockService {
     return this.prisma.channelsStock.findFirst({
       where: channelsStockWhereInput,
     });
+  }
+
+  findMany(
+    channelsStockWhereInput: Prisma.channelsStockWhereInput,
+  ): Promise<channelsStock[]> {
+    return this.prisma.channelsStock.findMany({
+      where: channelsStockWhereInput,
+    });
+  }
+
+  async getChannelsInStockByGuildUUID(guildUUID: string) {
+    const channelsStock = await this.getChannelsStockByGuildUUID(guildUUID);
+
+    if (typeof channelsStock === 'string') {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: channelsStock,
+      };
+    }
+
+    const define = await this.prisma.define.findMany({
+      where: {
+        id_channelsStock: channelsStock.id,
+      },
+    });
+
+    const channels = [];
+
+    for (const definedChannel of define) {
+      const channel = await this.channels.findOne({
+        id: definedChannel.id,
+      });
+
+      channels.push(channel);
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: channels,
+    };
   }
 
   async addChannelToStock(updateChannelsStockDto: UpdateChannelsStockDto) {

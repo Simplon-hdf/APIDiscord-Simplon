@@ -41,4 +41,9 @@ export class ChannelsStockController {
   addChannelToStock(@Body() updateChannelsStockDto: UpdateChannelsStockDto) {
     return this.channelsStockService.addChannelToStock(updateChannelsStockDto);
   }
+
+  @Get('channel/:guildUUID')
+  async getChannelStock(@Param('guildUUID') guildUUID: string) {
+    return this.channelsStockService.getChannelsInStockByGuildUUID(guildUUID);
+  }
 }

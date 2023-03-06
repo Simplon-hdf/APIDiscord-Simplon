@@ -19,6 +19,12 @@ export class ChannelsService {
     });
   }
 
+  findMany(channelWhereInput: Prisma.channelsWhereInput): Promise<channels[]> {
+    return this.prisma.channels.findMany({
+      where: channelWhereInput,
+    });
+  }
+
   async registerChannel(createChannelDto: CreateChannelDto) {
     const channel = await this.findOne({
       channel_uuid: createChannelDto.channel_uuid,
