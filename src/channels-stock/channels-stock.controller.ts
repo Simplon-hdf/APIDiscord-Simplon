@@ -15,8 +15,8 @@ import { UpdateChannelsStockDto } from './dto/update-channels-stock.dto';
 export class ChannelsStockController {
   constructor(private readonly channelsStockService: ChannelsStockService) {}
 
-  @Post('register')
-  registerChannelsStock(@Body() categoryUUID: string) {
+  @Post('register/:categoryUUID')
+  registerChannelsStock(@Param('categoryUUID') categoryUUID: string) {
     return this.channelsStockService.registerChannelsStock(categoryUUID);
   }
 }

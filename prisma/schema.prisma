@@ -50,7 +50,6 @@ model channels {
   created_at        DateTime            @default(now())
   updated_at        DateTime            @updatedAt
   define            define[]
-  channelsStock     channelsStock[]
 }
 
 model config {
@@ -212,11 +211,12 @@ model users {
 }
 
 model channelsStock {
-  id        Int      @id(map: "channelsStock_pk") @default(autoincrement())
-  id_guilds Int
-  guilds    guilds   @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channelsStock_guilds_fk")
-  channels  channels @relation(fields: [id], references: [id], map: "channelsStock_channels_fk")
-  define    define[]
+  id          Int      @id(map: "channelsStock_pk") @default(autoincrement())
+  id_guilds   Int
+  id_category Int
+  guilds      guilds   @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channelsStock_guilds_fk")
+  category    category @relation(fields: [id_channels], references: [id], map: "channelsStock_category_fk")
+  define      define[]
 }
 
 model define {
