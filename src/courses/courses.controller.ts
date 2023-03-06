@@ -22,6 +22,9 @@ export class CoursesController {
     return this.coursesService.createCourse(createCoursesDto);
   }
 
-  @Get('/courses/:id')
-  getCourse(@Param('id') id: number) {}
+  // Permet de retrouver les cours d'une guild
+  @Get('/guilds/:uuid')
+  getCourse(@Param('uuid') uuid: string) {
+    return this.coursesService.getCoursesByGuild(uuid);
+  }
 }

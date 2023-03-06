@@ -12,7 +12,16 @@ import { ChannelsModule } from './channels/channels.module';
 import { CategoryModule } from './category/category.module';
 
 @Module({
-  imports: [UsersModule, GuildsModule, ConfigModule, CoursesModule, TemplateModule, RolesModule, ChannelsModule, CategoryModule],
+  imports: [
+    UsersModule,
+    GuildsModule,
+    ConfigModule,
+    CoursesModule,
+    TemplateModule,
+    RolesModule,
+    ChannelsModule,
+    CategoryModule,
+  ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })

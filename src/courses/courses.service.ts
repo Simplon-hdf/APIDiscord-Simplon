@@ -3,10 +3,14 @@ import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { PrismaService } from '../prisma.service';
 import { courses, Prisma } from '@prisma/client';
+import { GuildsService } from '../guilds/guilds.service';
 
 @Injectable()
 export class CoursesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly guilds: GuildsService,
+  ) {}
   create(data: Prisma.coursesCreateInput): Promise<courses> {
     return this.prisma.courses.create({
       data,
@@ -19,6 +23,12 @@ export class CoursesService {
 
   findOne(coursesWhereInput: Prisma.coursesWhereInput): Promise<courses> {
     return this.prisma.courses.findFirst({
+      where: coursesWhereInput,
+    });
+  }
+
+  findMany(coursesWhereInput: Prisma.coursesWhereInput): Promise<courses[]> {
+    return this.prisma.courses.findMany({
       where: coursesWhereInput,
     });
   }
@@ -50,6 +60,28 @@ export class CoursesService {
           },
         },
       }),
+    };
+  }
+
+  async getCoursesByGuild(uuid: string) {
+    const guild = await this.guilds.findOne({
+      guild_uuid: uuid,
+    });
+
+    if (guild === null) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Guild not exist',
+      };
+    }
+
+    const couses: courses[] = await this.findMany({
+      guilds: guild,
+    });
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: couses,
     };
   }
 }
