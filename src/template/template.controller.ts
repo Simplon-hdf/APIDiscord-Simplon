@@ -16,15 +16,4 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('Template')
 export class TemplateController {
   constructor(private readonly templateService: TemplateService) {}
-
-  // Permet de recuperer la category template d'une guild
-  @Get('category/:uuid')
-  getTemplateCategory(@Param('uuid') uuid: string) {
-    return this.templateService.getCategoryLinkedToTemplateByGuild(uuid);
-  }
-
-  @Patch('category/link/:uuid')
-  linkCategory(@Param('uuid') uuid: string) {
-    return this.templateService.linkCategoryToTemplate(uuid);
-  }
 }

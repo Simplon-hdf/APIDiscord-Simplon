@@ -10,6 +10,7 @@ import { TemplateModule } from './template/template.module';
 import { RolesModule } from './roles/roles.module';
 import { ChannelsModule } from './channels/channels.module';
 import { CategoryModule } from './category/category.module';
+import { ChannelsStockModule } from './channels-stock/channels-stock.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { CategoryModule } from './category/category.module';
     RolesModule,
     ChannelsModule,
     CategoryModule,
+    ChannelsStockModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
