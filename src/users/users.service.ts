@@ -52,18 +52,35 @@ export class UsersService {
       };
     }
 
-    return {
-      statusCode: HttpStatus.OK,
-      data: await this.create({
-        user_uuid: createUserDto.user_uuid,
-        username: createUserDto.user_name,
-        mail: createUserDto.mail,
-        roles: {
+    const newUser = await this.create({
+      user_uuid: createUserDto.user_uuid,
+      username: createUserDto.user_name,
+      mail: createUserDto.mail,
+      roles: {
+        connect: {
+          id: createUserDto.role_id,
+        },
+      },
+    });
+
+    await this.prisma.appartenir.create({
+      data: {
+        users: {
           connect: {
-            id: createUserDto.role_id,
+            id: newUser.id,
           },
         },
-      }),
+        guilds: {
+          connect: {
+            id: createUserDto.id_guilds,
+          },
+        },
+      },
+    });
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: newUser,
     };
   }
 }
