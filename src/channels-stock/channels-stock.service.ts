@@ -24,18 +24,67 @@ export class ChannelsStockService {
     });
   }
 
-  async getChannelsStock(guildUUID: string) {
+  async addChannelToStock(guildUUID: string, channelUUID: string) {
+    const channelsStock = await this.getChannelsStockByGuildUUID(guildUUID);
+
+    if (typeof channelsStock === 'string') {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: channelsStock,
+      };
+    }
+
+    const channel = await this.prisma.channels.findFirst({
+      where: {
+        channel_uuid: channelUUID,
+      },
+    });
+
+    if (channel === null) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Channel is not registered',
+      };
+    }
+
+    const channelInStock = await this.prisma.define.findFirst({
+      where: {
+        id: channel.id,
+        id_channelsStock: channelsStock.id,
+      },
+    });
+
+    if (channelInStock !== null) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Channel is already in stock',
+      };
+    }
+
+    await this.prisma.define.create({
+      data: {
+        id: channel.id,
+        id_channelsStock: channelsStock.id,
+      },
+    });
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: 'Channel added to stock',
+    };
+  }
+
+  async getChannelsStockByGuildUUID(
+    guildUUID: string,
+  ): Promise<channelsStock | string> {
     const guild = await this.prisma.guilds.findFirst({
       where: {
         guild_uuid: guildUUID,
       },
     });
 
-    if (guild === null) {
-      return {
-        statusCode: HttpStatus.CONFLICT,
-        error: 'Guild is not registered',
-      };
+    if (!guild) {
+      return 'Guild is not registered';
     }
 
     const channelsStock = await this.prisma.channelsStock.findFirst({
@@ -44,17 +93,11 @@ export class ChannelsStockService {
       },
     });
 
-    if (channelsStock === null) {
-      return {
-        statusCode: HttpStatus.CONFLICT,
-        error: 'Channels stock is not registered',
-      };
+    if (!channelsStock) {
+      return 'Channels stock is not registered';
     }
 
-    return {
-      statusCode: HttpStatus.OK,
-      data: channelsStock,
-    };
+    return channelsStock;
   }
 
   async registerChannelsStock(categoryUUID) {

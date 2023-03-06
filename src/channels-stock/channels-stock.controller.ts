@@ -8,8 +8,6 @@ import {
   Delete,
 } from '@nestjs/common';
 import { ChannelsStockService } from './channels-stock.service';
-import { CreateChannelsStockDto } from './dto/create-channels-stock.dto';
-import { UpdateChannelsStockDto } from './dto/update-channels-stock.dto';
 
 @Controller('channels-stock')
 export class ChannelsStockController {
@@ -21,7 +19,20 @@ export class ChannelsStockController {
   }
 
   @Get(':guildUUID')
-  getChannelsStock(@Param('guildUUID') guildUUID: string) {
-    return this.channelsStockService.getChannelsStock(guildUUID);
+  async getChannelsStock(@Param('guildUUID') guildUUID: string) {
+    const channelsStock =
+      await this.channelsStockService.getChannelsStockByGuildUUID(guildUUID);
+
+    if (typeof channelsStock === 'string') {
+      return {
+        statusCode: 409,
+        error: channelsStock,
+      };
+    }
+
+    return {
+      statusCode: 200,
+      data: channelsStock,
+    };
   }
 }
