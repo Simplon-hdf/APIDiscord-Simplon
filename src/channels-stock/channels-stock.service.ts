@@ -55,6 +55,11 @@ export class ChannelsStockService {
             id: category.id_guilds,
           },
         },
+        category: {
+          connect: {
+            id: category.id,
+          },
+        },
       }),
     };
   }
