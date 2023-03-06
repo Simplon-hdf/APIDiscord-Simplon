@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, users } from '@prisma/client';
 import { PrismaService } from '../prisma.service';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -37,5 +38,32 @@ export class UsersService {
     return this.prisma.users.delete({
       where,
     });
+  }
+
+  async createUser(createUserDto: CreateUserDto) {
+    const user = await this.findOne({
+      user_uuid: createUserDto.user_uuid,
+    });
+
+    if (user !== null) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'User already exist',
+      };
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: await this.create({
+        user_uuid: createUserDto.user_uuid,
+        username: createUserDto.user_name,
+        mail: createUserDto.mail,
+        roles: {
+          connect: {
+            id: createUserDto.role_id,
+          },
+        },
+      }),
+    };
   }
 }

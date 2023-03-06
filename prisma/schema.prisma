@@ -87,6 +87,7 @@ model guilds {
   category      category[]
   roles         roles[]
   channelsStock channelsStock[]
+  users         users[]
 }
 
 model inclure {
@@ -199,10 +200,12 @@ model users {
   user_uuid         String
   id_roles          Int
   id_promo          Int?
+  id_guilds         Int
   appartenir        appartenir[]
   messages          messages[]
   resources_sharing resources_sharing[]
   ticket            ticket[]
+  guilds            guilds              @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_guilds_fk")
   roles             roles               @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_roles_fk")
   created_at        DateTime            @default(now())
   updated_at        DateTime            @updatedAt
