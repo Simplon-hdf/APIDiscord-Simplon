@@ -58,17 +58,28 @@ export class TemplateService {
       };
     }
 
-    const template = await this.create({
+    const template = await this.template({
       category: {
-        connect: {
-          id: category.id,
-        },
+        id: category.id,
       },
     });
 
+    if (template !== null) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Template already exist',
+      };
+    }
+
     return {
       statusCode: HttpStatus.OK,
-      data: template,
+      data: await this.create({
+        category: {
+          connect: {
+            id: category.id,
+          },
+        },
+      }),
     };
   }
 

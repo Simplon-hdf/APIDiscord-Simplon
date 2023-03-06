@@ -60,16 +60,18 @@ model config {
 }
 
 model courses {
-  id          Int      @id(map: "courses_pk") @default(autoincrement())
-  course_name String   @db.VarChar(255)
+  id          Int       @id(map: "courses_pk") @default(autoincrement())
+  course_name String    @db.VarChar(255)
   id_roles    Int
   id_guilds   Int
   config      config[]
-  roles       roles    @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_roles_fk")
-  guilds      guilds?  @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_guilds_fk")
+  roles       roles     @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_roles_fk")
+  guilds      guilds?   @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_guilds_fk")
   promo       promo[]
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  template    template? @relation(fields: [templateId], references: [id])
+  templateId  Int?
 }
 
 model guilds {
@@ -172,6 +174,7 @@ model template {
   category    category?  @relation(fields: [id_category], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "template_category_fk")
   created_at  DateTime   @default(now())
   updated_at  DateTime   @updatedAt
+  courses     courses[]
 }
 
 model ticket {

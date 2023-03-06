@@ -75,13 +75,17 @@ export class CoursesService {
       };
     }
 
-    const couses: courses[] = await this.findMany({
-      guilds: guild,
+    const course = await this.findMany({
+      guilds: {
+        id: guild.id,
+      },
     });
+
+    console.log(course);
 
     return {
       statusCode: HttpStatus.OK,
-      data: couses,
+      data: course,
     };
   }
 }
