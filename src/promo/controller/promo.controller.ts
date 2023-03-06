@@ -3,7 +3,6 @@ import { PromoService } from '../service/promo.service';
 import { promo } from '@prisma/client';
 import { ApiTags } from '@nestjs/swagger';
 import { RegisterPromoDto } from '../dto/RegisterPromoDTO';
-import { UpdatePromoDTO } from '../dto/UpdatePromoDTO';
 
 @ApiTags('Promo')
 @Controller('promo')
