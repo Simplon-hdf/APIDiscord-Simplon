@@ -9,7 +9,9 @@ import {
 } from '@nestjs/common';
 import { ChannelsStockService } from './channels-stock.service';
 import { UpdateChannelsStockDto } from './dto/update-channels-stock.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('channels-stock')
 @Controller('channels-stock')
 export class ChannelsStockController {
   constructor(private readonly channelsStockService: ChannelsStockService) {}
