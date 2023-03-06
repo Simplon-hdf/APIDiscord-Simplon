@@ -1,26 +1,61 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateChannelsStockDto } from './dto/create-channels-stock.dto';
 import { UpdateChannelsStockDto } from './dto/update-channels-stock.dto';
+import { PrismaService } from '../prisma.service';
+import { channelsStock, Prisma } from '@prisma/client';
+import { CategoryService } from '../category/category.service';
 
 @Injectable()
 export class ChannelsStockService {
-  create(createChannelsStockDto: CreateChannelsStockDto) {
-    return 'This action adds a new channelsStock';
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly category: CategoryService,
+  ) {}
+
+  create(data: Prisma.channelsStockCreateInput): Promise<channelsStock> {
+    return this.prisma.channelsStock.create({ data });
   }
 
-  findAll() {
-    return `This action returns all channelsStock`;
+  findOne(
+    channelsStockWhereInput: Prisma.channelsStockWhereInput,
+  ): Promise<channelsStock> {
+    return this.prisma.channelsStock.findFirst({
+      where: channelsStockWhereInput,
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} channelsStock`;
-  }
+  async registerChannelsStock(categoryUUID) {
+    const category = await this.category.category({
+      category_uuid: categoryUUID,
+    });
 
-  update(id: number, updateChannelsStockDto: UpdateChannelsStockDto) {
-    return `This action updates a #${id} channelsStock`;
-  }
+    if (category === null) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Category is not registered',
+      };
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} channelsStock`;
+    const stockChannels = await this.findOne({
+      id_guilds: category.id_guilds,
+    });
+
+    if (stockChannels !== null) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Channels stock is already registered',
+      };
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: await this.create({
+        guilds: {
+          connect: {
+            id: category.id_guilds,
+          },
+        },
+      }),
+    };
   }
 }
