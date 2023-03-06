@@ -18,7 +18,7 @@ export class UsersService {
     });
   }
 
-  getUserByPromoId(usersWhereInput: Prisma.usersWhereInput) {
+  getUserByPromoId(usersWhereInput: Prisma.usersWhereInput): Promise<users[]> {
     return this.prisma.users.findMany({
       where: usersWhereInput,
     });

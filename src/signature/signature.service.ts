@@ -3,7 +3,7 @@ import { CreateSignatureDto } from './dto/create-signature.dto';
 import { UpdateSignatureDto } from './dto/update-signature.dto';
 import { PrismaService } from '../prisma.service';
 import { UsersService } from '../users/users.service';
-import { courses, guilds, Prisma } from '@prisma/client';
+import { courses, Prisma, promo, signature } from '@prisma/client';
 import { GuildService } from '../guild/guild.service';
 
 @Injectable()
@@ -34,7 +34,7 @@ export class SignatureService {
     const promos = [];
 
     for (const element of promosIds) {
-      const promo = await this.getPromoById({
+      const promo = await this.getPromoNameByPromoId({
         id: element.id_promo,
       });
       promos.push(promo);
@@ -46,7 +46,11 @@ export class SignatureService {
     };
   }
 
-  getPromoById(promoWhereUniqueInput: Prisma.promoWhereUniqueInput) {
+  async getUsersByPromoId(promoId: number) {
+    return await this.users.getUserByPromoId({ id_promo: promoId });
+  }
+
+  getPromoNameByPromoId(promoWhereUniqueInput: Prisma.promoWhereUniqueInput) {
     return this.prisma.promo.findUnique({
       where: promoWhereUniqueInput,
       include: {
@@ -59,25 +63,20 @@ export class SignatureService {
     });
   }
 
-  getRoleByUserUuid(userId: string) {
-    return this.prisma.users.findFirst({
-      where: { user_uuid: userId },
-      include: {},
-    });
-  }
+  async getRoleByUserUuid(userId: string) {
+    const learner = await this.users.findOne({ user_uuid: userId });
 
-  async getRoleByGuildId(guildUuid: string) {
-    const guildId = await this.guild.findOne(guildUuid);
-    const courses = this.getCoursesByGuildId(guildId.id);
+    const role = await this.prisma.roles.findFirst({
+      where: { id: learner.id_roles },
+    });
+
+    return role.role_name;
   }
 
   getCoursesByGuildId(guildId: number): Promise<courses[]> {
     return this.prisma.courses.findMany({ where: { id_guilds: guildId } });
   }
 
-  getUsersByPromoId(promoId: number) {
-    return this.users.getUserByPromoId({ id_promo: promoId });
-  }
   update(id: number, updateSignatureDto: UpdateSignatureDto) {
     return `This action updates a #${id} signature for ${updateSignatureDto}`;
   }
@@ -86,12 +85,18 @@ export class SignatureService {
     return `This action removes a #${id} signature`;
   }
 
-  /*requestReportStatus(promoUuid: number) {
-    const statusObject = this.prisma.signature.findFirst({
-      where: { promoUuid },
+  async requestReportStatus(learnerUuid: string): Promise<boolean> {
+    const learnerPromo = await this.users.getUserbyUUID(learnerUuid);
+
+    const promoId = await this.prisma.promo.findFirst({
+      where: { id: learnerPromo.id_promo },
     });
-    return statusObject.state;
-  }*/
+    return promoId.code_request;
+  }
+
+  async hasReport(learnerUuid: string): Promise<boolean> {
+    const learner = await this.users.getUserbyUUID(learnerUuid);
+  }
 
   /*checkIfReport(learnerUuid: number, arrayOfReports: arr) {
     if (arrayOfReports.include(learnerUuid)) {

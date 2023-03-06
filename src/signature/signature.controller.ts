@@ -9,9 +9,7 @@ import {
 } from '@nestjs/common';
 import { SignatureService } from './signature.service';
 import { CreateSignatureDto } from './dto/create-signature.dto';
-import { UpdateSignatureDto } from './dto/update-signature.dto';
-import { User } from '../users/entities/user.entity';
-0;
+
 @Controller('signature')
 export class SignatureController {
   constructor(private readonly signatureService: SignatureService) {}
@@ -24,11 +22,6 @@ export class SignatureController {
   @Get()
   findAll() {
     return this.signatureService.findAll();
-  }
-
-  @Get('find/role/guild/:uuid')
-  getTrainerRoleByGuildUuid(uuid: string) {
-    return this.signatureService.getRoleByGuildId(uuid);
   }
 
   @Get('/find/:id')
@@ -51,15 +44,15 @@ export class SignatureController {
     return this.signatureService.getRoleByUserUuid(userId);
   }
 
-  @Get('/signature/reportStatus/:promoId')
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateSignatureDto: UpdateSignatureDto,
-  ) {
-    return this.signatureService.update(+id, updateSignatureDto);
+  @Get('/signature/reportStatus/:learnerUuid')
+  requestReportStatus(@Param('learnerUuid') learnerUuid: string) {
+    return this.signatureService.requestReportStatus(learnerUuid);
   }
 
+  @Get('/report/:learnerUuid')
+  hasReport(@Param('learnerUuid') learnerUuid: string) {
+    return this.signatureService.hasReport(learnerUuid);
+  }
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.signatureService.remove(+id);
