@@ -22,11 +22,10 @@ export class PromoService {
 
   async createPromo(dto: RegisterPromoDto) {
     try {
-      const courseId = await this.prisma.courses.findFirstOrThrow({
+      const course = await this.prisma.courses.findFirstOrThrow({
         where: { id: dto.id_courses },
       });
-
-      const roleId = await this.prisma.roles.findFirstOrThrow({
+      const role = await this.prisma.roles.findFirstOrThrow({
         where: { id: dto.id_roles },
       });
 
@@ -35,18 +34,18 @@ export class PromoService {
         code_request: dto.code_request,
         courses: {
           connect: {
-            id: +courseId,
+            id: course.id,
           },
         },
         roles: {
           connect: {
-            id: +roleId,
+            id: role.id,
           },
         },
       });
 
       return {
-        statusCode: 202,
+        statusCode: 201,
         data: newPromo,
       };
     } catch (error) {

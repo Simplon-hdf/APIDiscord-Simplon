@@ -1,8 +1,11 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { PromoService } from '../service/promo.service';
 import { promo } from '@prisma/client';
+import { ApiTags } from '@nestjs/swagger';
 import { RegisterPromoDto } from '../dto/RegisterPromoDTO';
+import { UpdatePromoDTO } from '../dto/UpdatePromoDTO';
 
+@ApiTags('Promo')
 @Controller('promo')
 export class PromoController {
   constructor(private readonly promoService: PromoService) {}
@@ -18,7 +21,7 @@ export class PromoController {
   }
 
   @Post('/create')
-  async createPromo(@Body() data: RegisterPromoDto) {
-    this.promoService.createPromo(data);
+  async createPromo(@Body() data: RegisterPromoDto): Promise<promo> {
+    return this.promoService.createPromo(data);
   }
 }
