@@ -28,7 +28,6 @@ export class ChannelsStockService {
     const channelsStock = await this.getChannelsStockByGuildUUID(
       updateChannelsStockDto.guild_uuid,
     );
-    console.log(updateChannelsStockDto.guild_uuid);
 
     if (typeof channelsStock === 'string') {
       return {
