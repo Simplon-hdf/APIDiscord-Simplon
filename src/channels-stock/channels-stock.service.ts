@@ -24,6 +24,39 @@ export class ChannelsStockService {
     });
   }
 
+  async getChannelsStock(guildUUID: string) {
+    const guild = await this.prisma.guilds.findFirst({
+      where: {
+        guild_uuid: guildUUID,
+      },
+    });
+
+    if (guild === null) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Guild is not registered',
+      };
+    }
+
+    const channelsStock = await this.prisma.channelsStock.findFirst({
+      where: {
+        id_guilds: guild.id,
+      },
+    });
+
+    if (channelsStock === null) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Channels stock is not registered',
+      };
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: channelsStock,
+    };
+  }
+
   async registerChannelsStock(categoryUUID) {
     const category = await this.category.category({
       category_uuid: categoryUUID,

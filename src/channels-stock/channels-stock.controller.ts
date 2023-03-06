@@ -19,4 +19,9 @@ export class ChannelsStockController {
   registerChannelsStock(@Param('categoryUUID') categoryUUID: string) {
     return this.channelsStockService.registerChannelsStock(categoryUUID);
   }
+
+  @Get(':guildUUID')
+  getChannelsStock(@Param('guildUUID') guildUUID: string) {
+    return this.channelsStockService.getChannelsStock(guildUUID);
+  }
 }
