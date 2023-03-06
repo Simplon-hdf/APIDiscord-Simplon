@@ -48,7 +48,7 @@ export class TicketingService {
         where: { user_uuid: RegisterTicketDto.user_uuid },
       });
 
-      const newTicket = this.registerTicket({
+      const newTicket = await this.registerTicket({
         ticket_state: RegisterTicketDto.ticket_state,
         ticket_tag: RegisterTicketDto.ticket_tag,
         roles: {
@@ -72,7 +72,10 @@ export class TicketingService {
       if (err.name != 'NotFoundError') {
         return err;
       } else {
-        return 'The ticket could not be created please check the input fields';
+        return {
+          code: 404,
+          message: 'The ticket could not be created please check the input fields'
+        };
       }
     }
   }
@@ -84,18 +87,18 @@ export class TicketingService {
     try {
       const ticket = await this.findTicketById(ticketId);
 
-      const message = this.registerMessage({
+      const message = await this.registerMessage({
         ...registerMessageDto,
         message_uuid: registerMessageDto.message_uuid,
         message_content: registerMessageDto.message_content,
         users: {
           connect: {
-            id: ticket.id_users,
+            id: ticket.data.id_users,
           },
         },
         ticket: {
           connect: {
-            id: ticket.id,
+            id: ticket.data.id,
           },
         },
       });
@@ -146,8 +149,6 @@ export class TicketingService {
         },
       });
 
-      // TODO: Handle event for no messages
-
       return {
         statusCode: 200,
         data: messages,
@@ -196,17 +197,18 @@ export class TicketingService {
       }
     }
   }
-  async updateTicketById(ticketWhereInput: Prisma.ticketWhereInput, ticket_id: number) {
-
+  async updateTicketById(
+    ticketWhereInput: Prisma.ticketWhereInput,
+    ticket_id: number,
+  ) {
     try {
-
       const updateTicket = await this.prisma.ticket.update({
         where: {
           id: Number(ticket_id),
         },
-        data:{
-          ticket_state: String(ticketWhereInput.ticket_state)
-        }
+        data: {
+          ticket_state: String(ticketWhereInput.ticket_state),
+        },
       });
 
       return {

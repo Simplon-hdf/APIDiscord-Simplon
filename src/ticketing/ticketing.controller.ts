@@ -23,7 +23,7 @@ export class TicketingController {
   @Post(':ticket_id/message/new')
   @ApiResponse({
     status: 200,
-    description: 'message has been found',
+    description: 'message has been created',
   })
   registerMessage(
     @Param('ticket_id') ticketId: number,
@@ -47,9 +47,13 @@ export class TicketingController {
     description: 'ticket as been updated !',
   })
   updateTicketByIsId(
-  @Param('ticket_id') ticketId: number,
-  @Body() UpdateTicketDto: UpdateTicketDto) {
-    return this.ticketingService.updateTicketStatusById(UpdateTicketDto, ticketId);
+    @Param('ticket_id') ticketId: number,
+    @Body() UpdateTicketDto: UpdateTicketDto,
+  ) {
+    return this.ticketingService.updateTicketStatusById(
+      UpdateTicketDto,
+      ticketId,
+    );
   }
 
   @Get(':id')
