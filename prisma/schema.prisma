@@ -50,6 +50,8 @@ model channels {
   resources_sharing resources_sharing[]
   created_at        DateTime            @default(now())
   updated_at        DateTime            @updatedAt
+  define            define[]
+  channelsStock     channelsStock[]
 }
 
 model config {
@@ -75,17 +77,18 @@ model courses {
 }
 
 model guilds {
-  id          Int          @id(map: "guilds_pk") @default(autoincrement())
-  guild_uuid  String
-  guild_name  String       @db.VarChar(50)
-  member_size Int
-  appartenir  appartenir[]
-  channels    channels[]
-  created_at  DateTime     @default(now())
-  updated_at  DateTime     @updatedAt
-  courses     courses[]
-  category    category[]
-  roles       roles[]
+  id            Int             @id(map: "guilds_pk") @default(autoincrement())
+  guild_uuid    String
+  guild_name    String          @db.VarChar(50)
+  member_size   Int
+  appartenir    appartenir[]
+  channels      channels[]
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
+  courses       courses[]
+  category      category[]
+  roles         roles[]
+  channelsStock channelsStock[]
 }
 
 model inclure {
@@ -208,6 +211,25 @@ model users {
   signature_trainer signature[]         @relation("learner")
   signature_learner signature[]         @relation("trainer")
   Participer        Participer[]
+}
+
+model channelsStock {
+  id        Int      @id(map: "channelsStock_pk") @default(autoincrement())
+  id_guilds Int
+  guilds    guilds   @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channelsStock_guilds_fk")
+  channels  channels @relation(fields: [id], references: [id], map: "channelsStock_channels_fk")
+  define    define[]
+}
+
+model define {
+  id               Int
+  id_channelsStock Int
+
+  channels      channels      @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "define_channels_fk")
+  channelsStock channelsStock @relation(fields: [id_channelsStock], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "define_channelsStock_fk")
+
+  @@id([id, id_channelsStock])
+  @@map("define")
 }
 
 model Participer {
