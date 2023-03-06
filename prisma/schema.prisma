@@ -27,8 +27,10 @@ model associer {
 
 model category {
   id            Int        @id(map: "category_pk") @default(autoincrement())
+  id_guilds     Int
   category_uuid String
   category_name String     @db.VarChar(255)
+  guilds        guilds     @relation(fields: [id_guilds], references: [id], map: "organiser_guilds_fk")
   channels      channels[]
   template      template[]
   created_at    DateTime   @default(now())
@@ -40,9 +42,9 @@ model channels {
   channel_name      String              @db.VarChar(255)
   channel_uuid      String
   id_guilds         Int
-  id_category       Int
+  id_category       Int?
   associer          associer[]
-  category          category            @relation(fields: [id_category], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channels_category0_fk")
+  category          category?           @relation(fields: [id_category], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channels_category0_fk")
   guilds            guilds              @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channels_guilds_fk")
   inclure           inclure[]
   resources_sharing resources_sharing[]
@@ -80,6 +82,8 @@ model guilds {
   created_at  DateTime     @default(now())
   updated_at  DateTime     @updatedAt
   courses     courses[]
+  category    category[]
+  roles       roles[]
 }
 
 model inclure {
@@ -141,6 +145,8 @@ model roles {
   role_uuid  String
   role_name  String    @db.VarChar(255)
   role_color String    @db.VarChar(20)
+  id_guilds  Int
+  guilds     guilds    @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "guilds_stock_roles")
   courses    courses[]
   promo      promo[]
   ticket     ticket[]
