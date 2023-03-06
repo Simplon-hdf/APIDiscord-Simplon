@@ -3,7 +3,7 @@ import { CreateSignatureDto } from './dto/create-signature.dto';
 import { UpdateSignatureDto } from './dto/update-signature.dto';
 import { PrismaService } from '../prisma.service';
 import { UsersService } from '../users/users.service';
-import { courses, Prisma, promo, signature } from '@prisma/client';
+import { courses, Prisma } from '@prisma/client';
 import { GuildService } from '../guild/guild.service';
 
 @Injectable()
@@ -63,6 +63,31 @@ export class SignatureService {
     });
   }
 
+  async getTrainersByPromoId(promoId: number): Promise<any> {
+    const participer = await this.prisma.participer.findMany({
+      where: { id_promo: promoId },
+    });
+    console.log(participer);
+    const trainerList = [];
+    for (const element of participer) {
+      const promo = await this.prisma.users.findFirst({
+        where: {
+          id: element.id,
+        },
+      });
+      trainerList.push(promo);
+    }
+    console.log(trainerList);
+    return trainerList;
+  }
+  async getTrainerByUserUuid(userUuid: string): Promise<any> {
+    const learner = await this.users.getUserbyUUID(userUuid);
+    const trainerList = await this.getTrainersByPromoId(learner.id_promo);
+
+    return;
+    //trainerList.data;
+  }
+
   async getRoleByUserUuid(userId: string) {
     const learner = await this.users.findOne({ user_uuid: userId });
 
@@ -96,6 +121,10 @@ export class SignatureService {
 
   async hasReport(learnerUuid: string): Promise<boolean> {
     const learner = await this.users.getUserbyUUID(learnerUuid);
+    const signature = await this.prisma.signature.findFirst({
+      where: { id_learner: learner.id },
+    });
+    return !!signature;
   }
 
   /*checkIfReport(learnerUuid: number, arrayOfReports: arr) {

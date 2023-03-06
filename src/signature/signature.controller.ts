@@ -34,6 +34,11 @@ export class SignatureController {
     return this.signatureService.getUsersByPromoId(+id);
   }
 
+  @Get('find/trainer/:learnerUuid')
+  async getTrainerByUserUuid(@Param('learnerUuid') learnerUuid: string) {
+    return await this.signatureService.getTrainerByUserUuid(learnerUuid);
+  }
+
   @Get('find/promo/trainer/:uuid')
   getPromosByTrainerUuid(@Param('uuid') promoUuid: string) {
     return this.signatureService.getPromoUuidByTrainerUuid(promoUuid);
