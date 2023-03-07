@@ -203,6 +203,7 @@ model users {
   messages          messages[]
   resources_sharing resources_sharing[]
   ticket            ticket[]
+  promo             promo?              @relation(fields: [id_promo], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_promo0_fk")
   roles             roles               @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_roles_fk")
   created_at        DateTime            @default(now())
   updated_at        DateTime            @updatedAt
