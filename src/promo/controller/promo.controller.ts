@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { PromoService } from '../service/promo.service';
 import { promo } from '@prisma/client';
 import { ApiTags } from '@nestjs/swagger';
@@ -31,5 +39,10 @@ export class PromoController {
     @Param('id') id: string,
   ): Promise<promo> {
     return this.promoService.updatePromo(data, +id);
+  }
+
+  @Delete('/delete/:id')
+  async deletePromo(@Param('id') id: string): Promise<any> {
+    return this.promoService.deletePromo(+id);
   }
 }
