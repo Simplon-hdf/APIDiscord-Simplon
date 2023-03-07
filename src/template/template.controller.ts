@@ -11,6 +11,7 @@ import { TemplateService } from './template.service';
 import { CreateTemplateDto } from './dto/create-template.dto';
 import { UpdateTemplateDto } from './dto/update-template.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { FindTemplateDto } from './dto/find-template.dto';
 
 @Controller('template')
 @ApiTags('Template')
@@ -25,5 +26,10 @@ export class TemplateController {
   @Patch('add')
   addChannelToCourseTemplate(@Body() updateTemplateDto: UpdateTemplateDto) {
     return this.templateService.addChannelToCourseTemplate(updateTemplateDto);
+  }
+
+  @Get('course')
+  findTemplateOfCourse(@Body() findTemplateDto: FindTemplateDto) {
+    return this.templateService.getTemplateOfCourse(findTemplateDto);
   }
 }

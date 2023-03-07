@@ -6,6 +6,7 @@ import { courses, Prisma, template } from '@prisma/client';
 import { CategoryService } from '../category/category.service';
 import { CoursesService } from '../courses/courses.service';
 import { ChannelsService } from '../channels/channels.service';
+import { FindTemplateDto } from './dto/find-template.dto';
 
 @Injectable()
 export class TemplateService {
@@ -49,6 +50,38 @@ export class TemplateService {
     return this.template({
       courses: course,
     });
+  }
+
+  async getTemplateOfCourse(findTemplateDto: FindTemplateDto) {
+    const course = await this.courses.findOne({
+      course_name: findTemplateDto.course_name,
+      AND: {
+        guilds: {
+          guild_uuid: findTemplateDto.guild_uuid,
+        },
+      },
+    });
+
+    if (course === null) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Course or guild not found',
+      };
+    }
+
+    const template = await this.getTemplateByCourses(course);
+
+    if (template === null) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Template not found',
+      };
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: template,
+    };
   }
 
   async createTemplateForCourse(createTemplateDto: CreateTemplateDto) {
