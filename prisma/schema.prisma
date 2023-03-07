@@ -170,13 +170,12 @@ model signature {
 }
 
 model template {
-  id          Int        @id(map: "template_pk") @default(autoincrement())
-  id_category Int
-  associer    associer[]
-  created_at  DateTime   @default(now())
-  updated_at  DateTime   @updatedAt
-  id_courses  Int
-  courses     courses    @relation(fields: [id_courses], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "template_courses_fk")
+  id         Int        @id(map: "template_pk") @default(autoincrement())
+  associer   associer[]
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  id_courses Int
+  courses    courses    @relation(fields: [id_courses], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "template_courses_fk")
 }
 
 model ticket {

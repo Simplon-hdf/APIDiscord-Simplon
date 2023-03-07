@@ -48,6 +48,12 @@ export class CategoryService {
     };
   }
 
+  async getCategoryById(id: number) {
+    return await this.category({
+      id: id,
+    });
+  }
+
   async getCategoryByGuild(guildUUID: string) {
     const category = await this.category({
       guilds: {

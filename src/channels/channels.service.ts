@@ -25,6 +25,12 @@ export class ChannelsService {
     });
   }
 
+  async getChannelByUUID(uuid: string) {
+    return await this.findOne({
+      channel_uuid: uuid,
+    });
+  }
+
   async registerChannel(createChannelDto: CreateChannelDto) {
     const channel = await this.findOne({
       channel_uuid: createChannelDto.channel_uuid,
