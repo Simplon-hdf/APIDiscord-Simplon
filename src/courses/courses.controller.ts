@@ -23,8 +23,13 @@ export class CoursesController {
   }
 
   // Permet de retrouver les cours d'une guild
-  @Get('/guilds/:uuid')
+  @Get('guilds/:uuid')
   getCourse(@Param('uuid') uuid: string) {
     return this.coursesService.getCoursesByGuild(uuid);
+  }
+
+  @Get('users')
+  getUsersByCourses(@Body() courses_name: string, guild_uuid: string) {
+    return this.coursesService.getUsersByCourses(courses_name, guild_uuid);
   }
 }

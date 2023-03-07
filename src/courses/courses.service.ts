@@ -4,12 +4,14 @@ import { UpdateCourseDto } from './dto/update-course.dto';
 import { PrismaService } from '../prisma.service';
 import { courses, Prisma } from '@prisma/client';
 import { GuildsService } from '../guilds/guilds.service';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class CoursesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly guilds: GuildsService,
+    private readonly users: UsersService,
   ) {}
   create(data: Prisma.coursesCreateInput): Promise<courses> {
     return this.prisma.courses.create({
@@ -63,9 +65,9 @@ export class CoursesService {
     };
   }
 
-  async getCoursesByGuild(uuid: string) {
+  async getCoursesByGuild(guild_uuid: string) {
     const guild = await this.guilds.findOne({
-      guild_uuid: uuid,
+      guild_uuid: guild_uuid,
     });
 
     if (guild === null) {
@@ -86,6 +88,51 @@ export class CoursesService {
     return {
       statusCode: HttpStatus.OK,
       data: course,
+    };
+  }
+
+  async getUsersByCourses(course_name: string, guild_uuid: string) {
+    const courses = await this.getCoursesByGuild(guild_uuid);
+
+    if (courses.statusCode === HttpStatus.CONFLICT) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Guild not exist',
+      };
+    }
+
+    const course = courses.data.find(
+      (course) => course.course_name === course_name,
+    );
+
+    if (course === undefined) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Course not exist',
+      };
+    }
+
+    const promos = await this.prisma.promo.findMany({
+      where: {
+        courses: {
+          id: course.id,
+        },
+      },
+    });
+
+    const users = [];
+
+    for (const promo of promos) {
+      const users_promo = await this.users.getUsersByPromo(promo.id);
+
+      for (const user of users_promo) {
+        users.push(user);
+      }
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: users,
     };
   }
 }
