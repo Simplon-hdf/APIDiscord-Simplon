@@ -5,7 +5,6 @@ import { PrismaService } from '../prisma.service';
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
-
   create(data: Prisma.usersCreateInput): Promise<users> {
     return this.prisma.users.create({
       data,

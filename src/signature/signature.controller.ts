@@ -14,9 +14,12 @@ import { CreateSignatureDto } from './dto/create-signature.dto';
 export class SignatureController {
   constructor(private readonly signatureService: SignatureService) {}
 
-  @Post()
-  create(@Body() createSignatureDto: CreateSignatureDto) {
-    return this.signatureService.create(createSignatureDto);
+  @Post('codeRequest/:learnerUuid')
+  create(
+    @Body() createSignatureDto: CreateSignatureDto,
+    @Param('learnerUuid') learnerUuid: string,
+  ) {
+    return this.signatureService.create(learnerUuid, createSignatureDto);
   }
 
   @Get()
@@ -58,6 +61,7 @@ export class SignatureController {
   hasReport(@Param('learnerUuid') learnerUuid: string) {
     return this.signatureService.hasReport(learnerUuid);
   }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.signatureService.remove(+id);

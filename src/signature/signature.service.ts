@@ -14,8 +14,51 @@ export class SignatureService {
     private guild: GuildService,
   ) {}
 
-  create(createSignatureDto: CreateSignatureDto) {
-    return `This action adds a new signature ${createSignatureDto}`;
+  async create(learnerUuid: string, trainerUuid: CreateSignatureDto) {
+    const trainer = await this.users.getUserbyUUID(trainerUuid.trainerUuid);
+    const learner = await this.users.getUserbyUUID(learnerUuid);
+
+    const reportLimit = this.checkIfReportLimit(learner.id);
+    if (reportLimit) {
+      return false;
+    } else {
+      // await this.prisma.signature.create();
+    }
+  }
+
+  async checkIfReportLimit(learnerId) {
+    const signatures = await this.prisma.signature.findMany({
+      where: {
+        id_learner: learnerId,
+      },
+    });
+
+    if (!signatures) {
+      throw new Error(`Signature not found`);
+    }
+
+    const now = new Date();
+    let morningCount = 0;
+    let afternoonCount = 0;
+    signatures.forEach((signature) => {
+      const start = new Date(signature.created_at);
+      start.setHours(0, 0, 0, 0);
+
+      const end = new Date(signature.created_at);
+      end.setHours(12, 30, 0, 0);
+
+      const isBetween1 =
+        start <= signature.created_at &&
+        signature.created_at <= end &&
+        start <= now &&
+        now <= end;
+
+      isBetween1 ? (morningCount += 1) : (afternoonCount += 1);
+    });
+
+    if (afternoonCount === 1) {
+      console.log('ok');
+    }
   }
 
   findAll() {
@@ -67,7 +110,6 @@ export class SignatureService {
     const participer = await this.prisma.participer.findMany({
       where: { id_promo: promoId },
     });
-    console.log(participer);
     const trainerList = [];
     for (const element of participer) {
       const promo = await this.prisma.users.findFirst({
@@ -77,15 +119,11 @@ export class SignatureService {
       });
       trainerList.push(promo);
     }
-    console.log(trainerList);
     return trainerList;
   }
   async getTrainerByUserUuid(userUuid: string): Promise<any> {
     const learner = await this.users.getUserbyUUID(userUuid);
-    const trainerList = await this.getTrainersByPromoId(learner.id_promo);
-
-    return;
-    //trainerList.data;
+    return await this.getTrainersByPromoId(learner.id_promo);
   }
 
   async getRoleByUserUuid(userId: string) {
