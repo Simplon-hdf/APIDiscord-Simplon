@@ -19,6 +19,21 @@ export class PromoService {
     return this.prisma.promo.create({ data });
   }
 
+  async deletePromo(idToSearch: number): Promise<any> {
+    try {
+      await this.prisma.promo.delete({
+        where: {
+          id: idToSearch,
+        },
+      });
+    } catch (error) {
+      if (error.name != 'NotFoundError') {
+        return error;
+      } else {
+        return "This promo can't be created, check fields";
+      }
+    }
+  }
   // Func
 
   async createPromo(dto: RegisterPromoDto) {
