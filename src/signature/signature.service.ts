@@ -20,7 +20,7 @@ export class SignatureService {
 
     const reportLimit = this.checkIfReportLimit(learner.id);
     if (reportLimit) {
-      return false;
+      console.log('limit');
     } else {
       // await this.prisma.signature.create();
     }
@@ -56,9 +56,7 @@ export class SignatureService {
       isBetween1 ? (morningCount += 1) : (afternoonCount += 1);
     });
 
-    if (afternoonCount === 1) {
-      console.log('ok');
-    }
+    return afternoonCount >= 3 || morningCount >= 3;
   }
 
   findAll() {
