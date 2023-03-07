@@ -18,11 +18,18 @@ export class SignatureService {
     const trainer = await this.users.getUserbyUUID(trainerUuid.trainerUuid);
     const learner = await this.users.getUserbyUUID(learnerUuid);
 
-    const reportLimit = this.checkIfReportLimit(learner.id);
-    if (reportLimit) {
-      console.log('limit');
+    const reportLimit = await this.checkIfReportLimit(learner.id);
+    if (!reportLimit) {
+      await this.prisma.signature.create({
+        data: {
+          id_learner: learner.id,
+          id_trainer: trainer.id,
+        },
+      });
+      console.log('created');
+      return true;
     } else {
-      // await this.prisma.signature.create();
+      return false;
     }
   }
 
