@@ -7,6 +7,7 @@ import { UpdatePromoDTO } from '../dto/UpdatePromoDTO';
 @Injectable()
 export class PromoService {
   constructor(private prisma: PrismaService) {}
+
   async getAll(): Promise<promo[]> {
     return this.prisma.promo.findMany();
   }
@@ -33,6 +34,14 @@ export class PromoService {
         return "This promo can't be created, check fields";
       }
     }
+  }
+
+  async getPromoByState(stateToSearch: boolean): Promise<promo[]> {
+    return await this.prisma.promo.findMany({
+      where: {
+        promo_state: stateToSearch,
+      },
+    });
   }
   // Func
 
