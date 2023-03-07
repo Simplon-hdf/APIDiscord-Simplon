@@ -83,8 +83,6 @@ export class CoursesService {
       },
     });
 
-    console.log(course);
-
     return {
       statusCode: HttpStatus.OK,
       data: course,
@@ -104,6 +102,8 @@ export class CoursesService {
     const course = courses.data.find(
       (course) => course.course_name === course_name,
     );
+
+    console.log(course_name);
 
     if (course === undefined) {
       return {

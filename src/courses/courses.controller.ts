@@ -11,6 +11,7 @@ import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { GetCoursesUsersDto } from './dto/get-courses-users-dto';
 
 @Controller('courses')
 @ApiTags('Courses')
@@ -29,7 +30,10 @@ export class CoursesController {
   }
 
   @Get('users')
-  getUsersByCourses(@Body() courses_name: string, guild_uuid: string) {
-    return this.coursesService.getUsersByCourses(courses_name, guild_uuid);
+  getUsersByCourses(@Body() getCoursesUsersDto: GetCoursesUsersDto) {
+    return this.coursesService.getUsersByCourses(
+      getCoursesUsersDto.course_name,
+      getCoursesUsersDto.guild_uuid,
+    );
   }
 }
