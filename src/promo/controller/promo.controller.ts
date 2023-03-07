@@ -28,6 +28,11 @@ export class PromoController {
     return this.promoService.getPromo(+id);
   }
 
+  @Get('/state/:state')
+  async getPromoByState(@Param('state') state: string): Promise<promo[]> {
+    return this.promoService.getPromoByState(state.toLowerCase() == 'true');
+  }
+
   @Post('/create')
   async createPromo(@Body() data: RegisterPromoDto): Promise<promo> {
     return this.promoService.createPromo(data);
