@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
 import { Prisma, promo } from '@prisma/client';
 import { RegisterPromoDto } from '../dto/RegisterPromoDTO';
+import { UpdatePromoDTO } from '../dto/UpdatePromoDTO';
 
 @Injectable()
 export class PromoService {
@@ -52,6 +53,47 @@ export class PromoService {
       if (error.name != 'NotFoundError') {
         return error;
       } else {
+        return "This promo can't be created, check fields";
+      }
+    }
+  }
+
+  async updatePromo(dto: UpdatePromoDTO, idToSearch: number) {
+    try {
+      await this.prisma.promo.findFirstOrThrow({
+        where: {
+          id: idToSearch,
+        },
+      });
+
+      const updatedPromo = await this.prisma.promo.update({
+        where: {
+          id: idToSearch,
+        },
+        data: {
+          promo_state: dto.promo_state,
+          code_request: dto.code_request,
+          courses: {
+            connect: {
+              id: dto.id_courses,
+            },
+          },
+          roles: {
+            connect: {
+              id: dto.id_roles,
+            },
+          },
+        },
+      });
+      return {
+        statusCode: 201,
+        data: updatedPromo,
+      };
+    } catch (error) {
+      if (error.name != 'NotFoundError') {
+        return error;
+      } else {
+        console.log(error);
         return "This promo can't be created, check fields";
       }
     }
