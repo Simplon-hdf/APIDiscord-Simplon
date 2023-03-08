@@ -185,7 +185,7 @@ model template {
 model ticket {
   id           Int        @id(map: "ticket_pk") @default(autoincrement())
   ticket_tag   String     @db.VarChar(255)
-  ticket_state Boolean
+  ticket_state String
   id_roles     Int
   id_users     Int
   id_messages  Int?
