@@ -54,10 +54,10 @@ model channels {
 }
 
 model config {
-  id         Int     @id(map: "config_pk") @default(autoincrement())
-  config     String  @db.VarChar(2000)
-  id_courses Int
-  courses    courses @relation(fields: [id_courses], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "config_courses_fk")
+  id      Int       @id(map: "config_pk") @default(autoincrement())
+  config  String    @db.VarChar(2000)
+  guilds  guilds[]
+  courses courses[]
 }
 
 model courses {
@@ -65,7 +65,8 @@ model courses {
   course_name String     @db.VarChar(255)
   id_roles    Int
   id_guilds   Int
-  config      config[]
+  id_config   Int?
+  config      config?    @relation(fields: [id_config], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_config_fk")
   roles       roles      @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_roles_fk")
   guilds      guilds?    @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_guilds_fk")
   promo       promo[]
@@ -79,6 +80,8 @@ model guilds {
   guild_uuid    String
   guild_name    String          @db.VarChar(50)
   member_size   Int
+  config_id     Int?
+  config        config?         @relation(fields: [config_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "guilds_config_fk")
   appartenir    appartenir[]
   channels      channels[]
   created_at    DateTime        @default(now())
