@@ -1,6 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
 import { PrismaService } from '../prisma.service';
 import { Prisma, roles } from '@prisma/client';
 import { CoursesService } from '../courses/courses.service';
@@ -18,6 +17,10 @@ export class RolesService {
     return this.prisma.roles.create({
       data,
     });
+  }
+
+  async getAll(): Promise<roles[]> {
+    return this.prisma.roles.findMany();
   }
 
   role(roleWhereInput: Prisma.rolesWhereInput): Promise<roles> {
