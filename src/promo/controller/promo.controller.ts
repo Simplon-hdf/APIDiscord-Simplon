@@ -1,19 +1,53 @@
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { PromoService } from '../service/promo.service';
 import { promo } from '@prisma/client';
-@Controller('api/v1/promo')
+import { ApiTags } from '@nestjs/swagger';
+import { RegisterPromoDto } from '../dto/RegisterPromoDTO';
+import { UpdatePromoDTO } from '../dto/UpdatePromoDTO';
+
+@ApiTags('Promo')
+@Controller('promo')
 export class PromoController {
   constructor(private readonly promoService: PromoService) {}
+
   @Get()
-  async getAllTodo(): Promise<promo[]> {
-    return this.promoService.getAllTodo();
+  async getAll(): Promise<promo[]> {
+    return this.promoService.getAll();
   }
-  @Post()
-  async createTodo(@Body() postData: promo): Promise<promo> {
-    return this.promoService.createTodo(postData);
-  }
+
   @Get(':id')
-  async getTodo(@Param('id') id: number): Promise<promo | null> {
-    return this.promoService.getTodo(id);
+  async getPromo(@Param('id') id: string): Promise<promo> {
+    return this.promoService.getPromo(+id);
+  }
+
+  @Get('/state/:state')
+  async getPromoByState(@Param('state') state: string): Promise<promo[]> {
+    return this.promoService.getPromoByState(state.toLowerCase() == 'true');
+  }
+
+  @Post('/create')
+  async createPromo(@Body() data: RegisterPromoDto): Promise<promo> {
+    return this.promoService.createPromo(data);
+  }
+
+  @Put('/update/:id')
+  async updatePromo(
+    @Body() data: UpdatePromoDTO,
+    @Param('id') id: string,
+  ): Promise<promo> {
+    return this.promoService.updatePromo(data, +id);
+  }
+
+  @Delete('/delete/:id')
+  async deletePromo(@Param('id') id: string): Promise<any> {
+    return this.promoService.deletePromo(+id);
   }
 }
