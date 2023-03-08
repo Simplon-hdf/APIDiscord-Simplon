@@ -11,6 +11,7 @@ import { RolesModule } from './roles/roles.module';
 import { ChannelsModule } from './channels/channels.module';
 import { CategoryModule } from './category/category.module';
 import { ChannelsStockModule } from './channels-stock/channels-stock.module';
+import { PromoModule } from './promo/promo.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ChannelsStockModule } from './channels-stock/channels-stock.module';
     RolesModule,
     ChannelsModule,
     CategoryModule,
+    PromoModule,
     ChannelsStockModule,
   ],
   controllers: [AppController],
