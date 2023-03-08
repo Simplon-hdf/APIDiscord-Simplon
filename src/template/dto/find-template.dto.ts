@@ -1,4 +1,4 @@
-export class CreateTemplateDto {
+export class FindTemplateDto {
   course_name: string;
   guild_uuid: string;
 }

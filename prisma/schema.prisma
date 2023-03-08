@@ -26,15 +26,15 @@ model associer {
 }
 
 model category {
-  id            Int        @id(map: "category_pk") @default(autoincrement())
+  id            Int             @id(map: "category_pk") @default(autoincrement())
   id_guilds     Int
   category_uuid String
-  category_name String     @db.VarChar(255)
-  guilds        guilds     @relation(fields: [id_guilds], references: [id], map: "organiser_guilds_fk")
+  category_name String          @db.VarChar(255)
+  guilds        guilds          @relation(fields: [id_guilds], references: [id], map: "organiser_guilds_fk")
   channels      channels[]
-  template      template[]
-  created_at    DateTime   @default(now())
-  updated_at    DateTime   @updatedAt
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
+  channelsStock channelsStock[]
 }
 
 model channels {
@@ -50,6 +50,7 @@ model channels {
   resources_sharing resources_sharing[]
   created_at        DateTime            @default(now())
   updated_at        DateTime            @updatedAt
+  define            define[]
 }
 
 model config {
@@ -60,30 +61,33 @@ model config {
 }
 
 model courses {
-  id          Int      @id(map: "courses_pk") @default(autoincrement())
-  course_name String   @db.VarChar(255)
+  id          Int        @id(map: "courses_pk") @default(autoincrement())
+  course_name String     @db.VarChar(255)
   id_roles    Int
   id_guilds   Int
   config      config[]
-  roles       roles    @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_roles_fk")
-  guilds      guilds?  @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_guilds_fk")
+  roles       roles      @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_roles_fk")
+  guilds      guilds?    @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_guilds_fk")
   promo       promo[]
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  template    template[]
 }
 
 model guilds {
-  id          Int          @id(map: "guilds_pk") @default(autoincrement())
-  guild_uuid  String
-  guild_name  String       @db.VarChar(50)
-  member_size Int
-  appartenir  appartenir[]
-  channels    channels[]
-  created_at  DateTime     @default(now())
-  updated_at  DateTime     @updatedAt
-  courses     courses[]
-  category    category[]
-  roles       roles[]
+  id            Int             @id(map: "guilds_pk") @default(autoincrement())
+  guild_uuid    String
+  guild_name    String          @db.VarChar(50)
+  member_size   Int
+  appartenir    appartenir[]
+  channels      channels[]
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
+  courses       courses[]
+  category      category[]
+  roles         roles[]
+  channelsStock channelsStock[]
+  users         users[]
 }
 
 model inclure {
@@ -126,6 +130,7 @@ model promo {
   created_at   DateTime     @default(now())
   updated_at   DateTime     @updatedAt
   Participer   Participer[]
+  users        users[]
 }
 
 model resources_sharing {
@@ -166,12 +171,12 @@ model signature {
 }
 
 model template {
-  id          Int        @id(map: "template_pk") @default(autoincrement())
-  id_category Int?
-  associer    associer[]
-  category    category?  @relation(fields: [id_category], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "template_category_fk")
-  created_at  DateTime   @default(now())
-  updated_at  DateTime   @updatedAt
+  id         Int        @id(map: "template_pk") @default(autoincrement())
+  associer   associer[]
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  id_courses Int
+  courses    courses    @relation(fields: [id_courses], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "template_courses_fk")
 }
 
 model ticket {
@@ -199,12 +204,35 @@ model users {
   messages          messages[]
   resources_sharing resources_sharing[]
   ticket            ticket[]
+  promo             promo?              @relation(fields: [id_promo], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_promo0_fk")
   roles             roles               @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_roles_fk")
   created_at        DateTime            @default(now())
   updated_at        DateTime            @updatedAt
   signature_trainer signature[]         @relation("learner")
   signature_learner signature[]         @relation("trainer")
   Participer        Participer[]
+  guilds            guilds?             @relation(fields: [guildsId], references: [id])
+  guildsId          Int?
+}
+
+model channelsStock {
+  id          Int      @id(map: "channelsStock_pk") @default(autoincrement())
+  id_guilds   Int
+  id_category Int
+  guilds      guilds   @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channelsStock_guilds_fk")
+  category    category @relation(fields: [id_category], references: [id], map: "channelsStock_category_fk")
+  define      define[]
+}
+
+model define {
+  id               Int
+  id_channelsStock Int
+
+  channels      channels      @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "define_channels_fk")
+  channelsStock channelsStock @relation(fields: [id_channelsStock], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "define_channelsStock_fk")
+
+  @@id([id, id_channelsStock])
+  @@map("define")
 }
 
 model Participer {
