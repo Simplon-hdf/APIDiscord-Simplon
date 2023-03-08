@@ -43,7 +43,7 @@ export class ChannelsService {
       };
     }
 
-    if (!createChannelDto.id_category) {
+    if (!createChannelDto.category_uuid) {
       return {
         statusCode: HttpStatus.OK,
         data: await this.create({
@@ -58,6 +58,12 @@ export class ChannelsService {
       };
     }
 
+    const category = await this.prisma.category.findFirst({
+      where: {
+        category_uuid: createChannelDto.category_uuid,
+      },
+    });
+
     return {
       statusCode: HttpStatus.OK,
       data: await this.create({
@@ -70,7 +76,7 @@ export class ChannelsService {
         },
         category: {
           connect: {
-            id: createChannelDto.id_category,
+            id: category.id,
           },
         },
       }),
