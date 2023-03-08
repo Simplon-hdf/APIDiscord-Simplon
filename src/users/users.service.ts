@@ -24,8 +24,10 @@ export class UsersService {
   }
 
   getUserbyUUID(uuid: string) {
-    return this.findOne({
-      user_uuid: uuid,
+    return this.prisma.users.findFirst({
+      where: {
+        user_uuid: uuid,
+      },
     });
   }
 

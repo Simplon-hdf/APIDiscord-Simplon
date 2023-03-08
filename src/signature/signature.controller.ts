@@ -16,8 +16,8 @@ export class SignatureController {
 
   @Post('codeRequest/:learnerUuid')
   create(
-    @Body() createSignatureDto: CreateSignatureDto,
     @Param('learnerUuid') learnerUuid: string,
+    @Body() createSignatureDto: CreateSignatureDto,
   ) {
     return this.signatureService.create(learnerUuid, createSignatureDto);
   }

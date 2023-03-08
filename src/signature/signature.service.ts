@@ -26,7 +26,6 @@ export class SignatureService {
           id_trainer: trainer.id,
         },
       });
-      console.log('created');
       return true;
     } else {
       return false;
