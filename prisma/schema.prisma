@@ -130,6 +130,7 @@ model promo {
   created_at   DateTime     @default(now())
   updated_at   DateTime     @updatedAt
   Participer   Participer[]
+  users        users[]
 }
 
 model resources_sharing {
