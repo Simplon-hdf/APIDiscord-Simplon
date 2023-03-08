@@ -23,6 +23,11 @@ export class PromoController {
     return this.promoService.getAll();
   }
 
+  @Get('guild/:uuid')
+  async getPromosByUUID(@Param('uuid') uuid: string): Promise<promo[]> {
+    return this.promoService.getPromosByGuildUUID(uuid);
+  }
+
   @Get(':id')
   async getPromo(@Param('id') id: string): Promise<promo> {
     return this.promoService.getPromo(+id);

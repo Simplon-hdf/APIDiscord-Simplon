@@ -20,6 +20,40 @@ export class PromoService {
     return this.prisma.promo.create({ data });
   }
 
+  async getPromosByGuildUUID(guild_uuid: string) {
+    try {
+      const guild = await this.prisma.guilds.findFirstOrThrow({
+        where: {
+          guild_uuid: guild_uuid,
+        },
+      });
+
+      const courses = await this.prisma.courses.findMany({
+        where: {
+          id_guilds: guild.id,
+        },
+      });
+
+      const promos: promo[] = [];
+      for (const course of courses) {
+        const promo = await this.prisma.promo.findMany({
+          where: {
+            id_courses: course.id,
+          },
+        });
+        promos.push(...promo);
+      }
+      return promos;
+    } catch (error) {
+      console.log(error);
+      if (error.name != 'NotFoundError') {
+        return error;
+      } else {
+        return "This promo can't be created, check fields";
+      }
+    }
+  }
+
   async deletePromo(idToSearch: number): Promise<any> {
     try {
       await this.prisma.promo.delete({
