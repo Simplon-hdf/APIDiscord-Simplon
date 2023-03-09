@@ -2,6 +2,8 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { PrismaService } from '../prisma.service';
 import { channels, Prisma } from '@prisma/client';
+import { UpdateChannelDto } from './dto/update-channel.dto';
+import { DeleteChannelDto } from './dto/delete-channel.dto';
 
 @Injectable()
 export class ChannelsService {
@@ -60,32 +62,88 @@ export class ChannelsService {
       };
     }
 
-    this.prisma.category
-      .findFirst({
-        where: {
-          category_uuid: createChannelDto.category_uuid,
-        },
-      })
-      .then(async (cat) => {
-        response = {
-          statusCode: HttpStatus.OK,
-          data: await this.create({
-            channel_uuid: createChannelDto.channel_uuid,
-            channel_name: createChannelDto.channel_name,
-            guilds: {
-              connect: {
-                id: createChannelDto.id_guilds,
-              },
-            },
-            category: {
-              connect: {
-                id: cat.id,
-              },
-            },
-          }),
-        };
-      });
+    const cat = await this.prisma.category.findFirst({
+      where: {
+        category_uuid: createChannelDto.category_uuid,
+      },
+    });
 
-    return response;
+    if (!cat) {
+      return {
+        statusCode: HttpStatus.NOT_FOUND,
+        error: 'Category not found',
+      };
+    }
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      data: await this.create({
+        channel_uuid: createChannelDto.channel_uuid,
+        channel_name: createChannelDto.channel_name,
+        guilds: {
+          connect: {
+            id: createChannelDto.id_guilds,
+          },
+        },
+        category: {
+          connect: {
+            id: cat.id,
+          },
+        },
+      }),
+    };
+  }
+
+  async updateChannelName(updateChannelDto: UpdateChannelDto) {
+    const channel = await this.findOne({
+      channel_uuid: updateChannelDto.channel_uuid,
+      guilds: {
+        guild_uuid: updateChannelDto.guild_uuid,
+      },
+    });
+
+    if (!channel) {
+      return {
+        statusCode: HttpStatus.NOT_FOUND,
+        error: 'Channel not found',
+      };
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: await this.prisma.channels.update({
+        where: {
+          id: channel.id,
+        },
+        data: {
+          channel_name: updateChannelDto.channel_name,
+        },
+      }),
+    };
+  }
+
+  async deleteChannel(deleteChannelDto: DeleteChannelDto) {
+    const channel = await this.findOne({
+      channel_uuid: deleteChannelDto.channel_uuid,
+      guilds: {
+        guild_uuid: deleteChannelDto.guild_uuid,
+      },
+    });
+
+    if (!channel) {
+      return {
+        statusCode: HttpStatus.NOT_FOUND,
+        error: 'Channel not found',
+      };
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: await this.prisma.channels.delete({
+        where: {
+          id: channel.id,
+        },
+      }),
+    };
   }
 }
