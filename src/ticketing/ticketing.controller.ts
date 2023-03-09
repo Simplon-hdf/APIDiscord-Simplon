@@ -65,6 +65,15 @@ export class TicketingController {
     return this.ticketingService.findTicketById(id);
   }
 
+  @Get('message/:message_uuid')
+  @ApiResponse({
+    status: 200,
+    description: 'ticket as been found !',
+  })
+  findTicketByMessageUuid(@Param('message_uuid') message_uuid: string) {
+    return this.ticketingService.getTicketByMessageUuid(message_uuid);
+  }
+
   @Get(':ticket_id/messages')
   @ApiResponse({
     status: 200,

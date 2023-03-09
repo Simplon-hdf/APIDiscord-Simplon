@@ -24,6 +24,10 @@ export class TicketingService {
     return this.getTicketByTicketId({ id });
   }
 
+  getTicketByMessageUuid(message_uuid: string) {
+    return this.findTicketByMessageUuid({ message_uuid: message_uuid });
+  }
+
   findMessageByTicketId(id: number) {
     return this.getMessagesByTicketId({ id });
   }
@@ -74,7 +78,8 @@ export class TicketingService {
       } else {
         return {
           code: 404,
-          message: 'The ticket could not be created please check the input fields'
+          message:
+            'The ticket could not be created please check the input fields',
         };
       }
     }
@@ -114,6 +119,36 @@ export class TicketingService {
         return {
           statusCode: 404,
           message: 'Ticket was not found for save message',
+        };
+      }
+    }
+  }
+
+  async findTicketByMessageUuid(messageWhereInput: Prisma.messagesWhereInput) {
+    try {
+      const messageID = await this.prisma.messages.findFirstOrThrow({
+        where: {
+          message_uuid: messageWhereInput.message_uuid,
+        },
+      });
+
+      const ticket = await this.prisma.ticket.findMany({
+        where: {
+          id_messages: messageID.id,
+        },
+      });
+
+      return {
+        statusCode: 200,
+        data: ticket,
+      };
+    } catch (err) {
+      if (err.name != 'NotFoundError') {
+        return err;
+      } else {
+        return {
+          statusCode: 404,
+          message: 'Ticket not found',
         };
       }
     }
