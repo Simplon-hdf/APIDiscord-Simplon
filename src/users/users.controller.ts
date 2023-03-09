@@ -25,4 +25,15 @@ export class UsersController {
   register(@Body() createUserDto: CreateUserDto) {
     return this.usersService.createAccount(createUserDto);
   }
+
+  @Get(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'ticket as been found !',
+  })
+  findUserByUuid(@Param('id') user_uuid: string) {
+    return this.usersService.findOne({
+      user_uuid: user_uuid
+    });
+  }
 }

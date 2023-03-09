@@ -1,0 +1,321 @@
+-- CreateTable
+CREATE TABLE "appartenir" (
+    "id" INTEGER NOT NULL,
+    "id_guilds" INTEGER NOT NULL,
+
+    CONSTRAINT "appartenir_pk" PRIMARY KEY ("id","id_guilds")
+);
+
+-- CreateTable
+CREATE TABLE "associer" (
+    "id" INTEGER NOT NULL,
+    "id_channels" INTEGER NOT NULL,
+
+    CONSTRAINT "associer_pk" PRIMARY KEY ("id","id_channels")
+);
+
+-- CreateTable
+CREATE TABLE "category" (
+    "id" SERIAL NOT NULL,
+    "id_guilds" INTEGER NOT NULL,
+    "category_uuid" TEXT NOT NULL,
+    "category_name" VARCHAR(255) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "category_pk" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "channels" (
+    "id" SERIAL NOT NULL,
+    "channel_name" VARCHAR(255) NOT NULL,
+    "channel_uuid" TEXT NOT NULL,
+    "id_guilds" INTEGER NOT NULL,
+    "id_category" INTEGER,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "channels_pk" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "config" (
+    "id" SERIAL NOT NULL,
+    "config" VARCHAR(2000) NOT NULL,
+
+    CONSTRAINT "config_pk" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "courses" (
+    "id" SERIAL NOT NULL,
+    "course_name" VARCHAR(255) NOT NULL,
+    "id_roles" INTEGER NOT NULL,
+    "id_guilds" INTEGER NOT NULL,
+    "id_config" INTEGER,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "courses_pk" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "guilds" (
+    "id" SERIAL NOT NULL,
+    "guild_uuid" TEXT NOT NULL,
+    "guild_name" VARCHAR(50) NOT NULL,
+    "member_size" INTEGER NOT NULL,
+    "config_id" INTEGER,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "guilds_pk" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "inclure" (
+    "id" INTEGER NOT NULL,
+    "id_channels" INTEGER NOT NULL,
+
+    CONSTRAINT "inclure_pk" PRIMARY KEY ("id","id_channels")
+);
+
+-- CreateTable
+CREATE TABLE "link" (
+    "id" SERIAL NOT NULL,
+    "link" VARCHAR(50) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "link_pk" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "messages" (
+    "id" SERIAL NOT NULL,
+    "message_uuid" TEXT NOT NULL,
+    "message_content" VARCHAR(255) NOT NULL,
+    "id_users" INTEGER NOT NULL,
+    "id_ticket" INTEGER,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "messages_pk" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "promo" (
+    "id" SERIAL NOT NULL,
+    "promo_state" BOOLEAN NOT NULL,
+    "code_request" BOOLEAN NOT NULL DEFAULT true,
+    "id_courses" INTEGER NOT NULL,
+    "id_roles" INTEGER NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "promo_pk" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "resources_sharing" (
+    "id" SERIAL NOT NULL,
+    "up_vote" INTEGER NOT NULL,
+    "down_vote" INTEGER NOT NULL,
+    "id_channels" INTEGER NOT NULL,
+    "id_users" INTEGER NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "resources_sharing_pk" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "roles" (
+    "id" SERIAL NOT NULL,
+    "role_uuid" TEXT NOT NULL,
+    "role_name" VARCHAR(255) NOT NULL,
+    "role_color" VARCHAR(20) NOT NULL,
+    "id_guilds" INTEGER NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "roles_pk" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "signature" (
+    "id" SERIAL NOT NULL,
+    "id_learner" INTEGER,
+    "id_trainer" INTEGER,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "signature_pk" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "template" (
+    "id" SERIAL NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    "id_courses" INTEGER NOT NULL,
+
+    CONSTRAINT "template_pk" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ticket" (
+    "id" SERIAL NOT NULL,
+    "ticket_tag" VARCHAR(255) NOT NULL,
+    "ticket_state" VARCHAR(255) NOT NULL,
+    "id_roles" INTEGER NOT NULL,
+    "id_users" INTEGER NOT NULL,
+    "id_messages" INTEGER,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ticket_pk" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "users" (
+    "id" SERIAL NOT NULL,
+    "username" VARCHAR(255) NOT NULL,
+    "mail" VARCHAR(255) NOT NULL,
+    "user_uuid" TEXT NOT NULL,
+    "id_roles" INTEGER NOT NULL,
+    "id_promo" INTEGER,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    "guildsId" INTEGER,
+
+    CONSTRAINT "users_pk" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "channelsStock" (
+    "id" SERIAL NOT NULL,
+    "id_guilds" INTEGER NOT NULL,
+    "id_category" INTEGER NOT NULL,
+
+    CONSTRAINT "channelsStock_pk" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "define" (
+    "id" INTEGER NOT NULL,
+    "id_channelsStock" INTEGER NOT NULL,
+
+    CONSTRAINT "define_pkey" PRIMARY KEY ("id","id_channelsStock")
+);
+
+-- CreateTable
+CREATE TABLE "Participer" (
+    "id" INTEGER NOT NULL,
+    "id_promo" INTEGER NOT NULL,
+
+    CONSTRAINT "Participer_pkey" PRIMARY KEY ("id","id_promo")
+);
+
+-- AddForeignKey
+ALTER TABLE "appartenir" ADD CONSTRAINT "appartenir_guilds0_fk" FOREIGN KEY ("id_guilds") REFERENCES "guilds"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "appartenir" ADD CONSTRAINT "appartenir_users_fk" FOREIGN KEY ("id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "associer" ADD CONSTRAINT "associer_channels0_fk" FOREIGN KEY ("id_channels") REFERENCES "channels"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "associer" ADD CONSTRAINT "associer_template_fk" FOREIGN KEY ("id") REFERENCES "template"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "category" ADD CONSTRAINT "organiser_guilds_fk" FOREIGN KEY ("id_guilds") REFERENCES "guilds"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "channels" ADD CONSTRAINT "channels_category0_fk" FOREIGN KEY ("id_category") REFERENCES "category"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "channels" ADD CONSTRAINT "channels_guilds_fk" FOREIGN KEY ("id_guilds") REFERENCES "guilds"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "courses" ADD CONSTRAINT "courses_config_fk" FOREIGN KEY ("id_config") REFERENCES "config"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "courses" ADD CONSTRAINT "courses_roles_fk" FOREIGN KEY ("id_roles") REFERENCES "roles"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "courses" ADD CONSTRAINT "courses_guilds_fk" FOREIGN KEY ("id_guilds") REFERENCES "guilds"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "guilds" ADD CONSTRAINT "guilds_config_fk" FOREIGN KEY ("config_id") REFERENCES "config"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "inclure" ADD CONSTRAINT "inclure_channels0_fk" FOREIGN KEY ("id_channels") REFERENCES "channels"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "inclure" ADD CONSTRAINT "inclure_messages_fk" FOREIGN KEY ("id") REFERENCES "messages"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "messages" ADD CONSTRAINT "messages_id_ticket_fkey" FOREIGN KEY ("id_ticket") REFERENCES "ticket"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "messages" ADD CONSTRAINT "messages_users_fk" FOREIGN KEY ("id_users") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "promo" ADD CONSTRAINT "promo_courses_fk" FOREIGN KEY ("id_courses") REFERENCES "courses"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "promo" ADD CONSTRAINT "promo_roles0_fk" FOREIGN KEY ("id_roles") REFERENCES "roles"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "resources_sharing" ADD CONSTRAINT "resources_sharing_channels_fk" FOREIGN KEY ("id_channels") REFERENCES "channels"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "resources_sharing" ADD CONSTRAINT "resources_sharing_users0_fk" FOREIGN KEY ("id_users") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "roles" ADD CONSTRAINT "guilds_stock_roles" FOREIGN KEY ("id_guilds") REFERENCES "guilds"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "signature" ADD CONSTRAINT "learner_pk" FOREIGN KEY ("id_learner") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "signature" ADD CONSTRAINT "trainer_pk" FOREIGN KEY ("id_trainer") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "template" ADD CONSTRAINT "template_courses_fk" FOREIGN KEY ("id_courses") REFERENCES "courses"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "ticket" ADD CONSTRAINT "ticket_roles0_fk" FOREIGN KEY ("id_roles") REFERENCES "roles"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "ticket" ADD CONSTRAINT "ticket_users1_fk" FOREIGN KEY ("id_users") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "users" ADD CONSTRAINT "users_promo0_fk" FOREIGN KEY ("id_promo") REFERENCES "promo"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "users" ADD CONSTRAINT "users_roles_fk" FOREIGN KEY ("id_roles") REFERENCES "roles"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "users" ADD CONSTRAINT "users_guildsId_fkey" FOREIGN KEY ("guildsId") REFERENCES "guilds"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "channelsStock" ADD CONSTRAINT "channelsStock_guilds_fk" FOREIGN KEY ("id_guilds") REFERENCES "guilds"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "channelsStock" ADD CONSTRAINT "channelsStock_category_fk" FOREIGN KEY ("id_category") REFERENCES "category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "define" ADD CONSTRAINT "define_channels_fk" FOREIGN KEY ("id") REFERENCES "channels"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "define" ADD CONSTRAINT "define_channelsStock_fk" FOREIGN KEY ("id_channelsStock") REFERENCES "channelsStock"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "Participer" ADD CONSTRAINT "Participer_id_fkey" FOREIGN KEY ("id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Participer" ADD CONSTRAINT "Participer_id_promo_fkey" FOREIGN KEY ("id_promo") REFERENCES "promo"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
