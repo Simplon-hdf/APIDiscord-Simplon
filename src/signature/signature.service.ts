@@ -40,8 +40,9 @@ export class SignatureService {
     });
 
     if (!signatures) {
-      throw new Error(`Signature not found`);
+      return;
     }
+    // TODO: check this condition
 
     const now = new Date();
     let morningCount = 0;
@@ -69,7 +70,6 @@ export class SignatureService {
     const trainer = await this.users.getUserbyUUID(trainerUUID);
 
     const promosIds = await this.users.getUserPromo(trainer);
-
     const promos = [];
 
     for (const element of promosIds) {
@@ -116,6 +116,7 @@ export class SignatureService {
     }
     return trainerList;
   }
+
   async getTrainerByUserUuid(userUuid: string): Promise<any> {
     const learner = await this.users.getUserbyUUID(userUuid);
     return await this.getTrainersByPromoId(learner.id_promo);
@@ -154,5 +155,27 @@ export class SignatureService {
       where: { id_learner: learner.id },
     });
     return !!signature;
+  }
+
+  async changeStatus(promoId: number): Promise<boolean> {
+    const promo = await this.prisma.promo.findFirst({
+      where: {
+        id: promoId,
+      },
+    });
+    if (promo.code_request === true) {
+      await this.prisma.promo.update({
+        where: { id: promoId },
+        data: { code_request: false },
+      });
+      console.log('false');
+    } else if (promo.code_request === false) {
+      await this.prisma.promo.update({
+        where: { id: promoId },
+        data: { code_request: true },
+      });
+      console.log('true');
+    }
+    return true;
   }
 }

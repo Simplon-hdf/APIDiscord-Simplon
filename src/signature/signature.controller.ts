@@ -38,4 +38,9 @@ export class SignatureController {
   hasReport(@Param('learnerUuid') learnerUuid: string) {
     return this.signatureService.hasReport(learnerUuid);
   }
+
+  @Get('/codeRequest/changeStatus/:promoUuid')
+  changeStatus(@Param('promoUuid') promoId: string) {
+    return this.signatureService.changeStatus(+promoId);
+  }
 }
