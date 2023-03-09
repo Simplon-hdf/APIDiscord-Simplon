@@ -18,7 +18,7 @@ export class ChannelsController {
   constructor(private readonly channelsService: ChannelsService) {}
 
   @Post('register')
-  registerChannel(@Body() createChannelDto: CreateChannelDto) {
-    return this.channelsService.registerChannel(createChannelDto);
+  async registerChannel(@Body() createChannelDto: CreateChannelDto) {
+    return await this.channelsService.registerChannel(createChannelDto);
   }
 }

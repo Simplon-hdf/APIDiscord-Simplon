@@ -43,7 +43,9 @@ export class ChannelsService {
       };
     }
 
-    if (!createChannelDto.category_uuid) {
+    let response;
+
+    if (createChannelDto.category_uuid === undefined) {
       return {
         statusCode: HttpStatus.OK,
         data: await this.create({
@@ -58,28 +60,32 @@ export class ChannelsService {
       };
     }
 
-    const category = await this.prisma.category.findFirst({
-      where: {
-        category_uuid: createChannelDto.category_uuid,
-      },
-    });
+    this.prisma.category
+      .findFirst({
+        where: {
+          category_uuid: createChannelDto.category_uuid,
+        },
+      })
+      .then(async (cat) => {
+        response = {
+          statusCode: HttpStatus.OK,
+          data: await this.create({
+            channel_uuid: createChannelDto.channel_uuid,
+            channel_name: createChannelDto.channel_name,
+            guilds: {
+              connect: {
+                id: createChannelDto.id_guilds,
+              },
+            },
+            category: {
+              connect: {
+                id: cat.id,
+              },
+            },
+          }),
+        };
+      });
 
-    return {
-      statusCode: HttpStatus.OK,
-      data: await this.create({
-        channel_uuid: createChannelDto.channel_uuid,
-        channel_name: createChannelDto.channel_name,
-        guilds: {
-          connect: {
-            id: createChannelDto.id_guilds,
-          },
-        },
-        category: {
-          connect: {
-            id: category.id,
-          },
-        },
-      }),
-    };
+    return response;
   }
 }

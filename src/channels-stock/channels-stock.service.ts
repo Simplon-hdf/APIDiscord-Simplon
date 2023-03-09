@@ -34,6 +34,18 @@ export class ChannelsStockService {
     });
   }
 
+  async channelsStockExist(guildsUUID: string) {
+    const channelsStock = await this.findOne({
+      guilds: {
+        guild_uuid: guildsUUID,
+      },
+    });
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: channelsStock === null,
+    };
+  }
   async getChannelsInStockByGuildUUID(guildUUID: string) {
     const channelsStock = await this.getChannelsStockByGuildUUID(guildUUID);
 

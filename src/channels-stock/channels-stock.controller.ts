@@ -48,4 +48,9 @@ export class ChannelsStockController {
   async getChannelStock(@Param('guildUUID') guildUUID: string) {
     return this.channelsStockService.getChannelsInStockByGuildUUID(guildUUID);
   }
+
+  @Get('exist/:guildUUID')
+  async getChannelsStockExist(@Param('guildUUID') guildUUID: string) {
+    return this.channelsStockService.channelsStockExist(guildUUID);
+  }
 }
