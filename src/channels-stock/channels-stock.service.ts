@@ -43,7 +43,7 @@ export class ChannelsStockService {
 
     return {
       statusCode: HttpStatus.OK,
-      data: channelsStock === null,
+      data: channelsStock !== null,
     };
   }
   async getChannelsInStockByGuildUUID(guildUUID: string) {
@@ -162,6 +162,8 @@ export class ChannelsStockService {
     });
 
     if (category === null) {
+      console.log('category ' + category);
+
       return {
         statusCode: HttpStatus.CONFLICT,
         error: 'Category is not registered',

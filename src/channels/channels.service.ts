@@ -36,7 +36,7 @@ export class ChannelsService {
       channel_uuid: createChannelDto.channel_uuid,
     });
 
-    if (channel !== null) {
+    if (channel) {
       return {
         statusCode: HttpStatus.CONFLICT,
         error: 'Channel already exist',
