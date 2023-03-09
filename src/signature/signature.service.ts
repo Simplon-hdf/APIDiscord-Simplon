@@ -1,8 +1,9 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateSignatureDto } from './dto/create-signature.dto';
+
 import { PrismaService } from '../prisma.service';
 import { UsersService } from '../users/users.service';
-import { Prisma } from '@prisma/client';
+import { courses, Prisma } from '@prisma/client';
 import { GuildService } from '../guild/guild.service';
 
 @Injectable()
@@ -77,7 +78,6 @@ export class SignatureService {
       });
       promos.push(promo);
     }
-
     return {
       statusCode: HttpStatus.OK,
       data: promos,
@@ -119,6 +119,24 @@ export class SignatureService {
   async getTrainerByUserUuid(userUuid: string): Promise<any> {
     const learner = await this.users.getUserbyUUID(userUuid);
     return await this.getTrainersByPromoId(learner.id_promo);
+  }
+
+  async getRoleByUserUuid(userId: string) {
+    const learner = await this.users.findOne({ user_uuid: userId });
+
+    const role = await this.prisma.roles.findFirst({
+      where: { id: learner.id_roles },
+    });
+
+    return role.role_name;
+  }
+
+  getCoursesByGuildId(guildId: number): Promise<courses[]> {
+    return this.prisma.courses.findMany({ where: { id_guilds: guildId } });
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} signature`;
   }
 
   async requestReportStatus(learnerUuid: string): Promise<boolean> {

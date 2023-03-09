@@ -25,8 +25,8 @@ export class SignatureController {
   }
 
   @Get('find/promo/trainer/:uuid')
-  getPromosByTrainerUuid(@Param('uuid') promoUuid: string) {
-    return this.signatureService.getPromoUuidByTrainerUuid(promoUuid);
+  getPromosByTrainerUuid(@Param('uuid') trainerUuid: string) {
+    return this.signatureService.getPromoUuidByTrainerUuid(trainerUuid);
   }
 
   @Get('/signature/reportStatus/:learnerUuid')
