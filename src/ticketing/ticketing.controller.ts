@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch } from '@nestjs/common';
 import { TicketingService } from './ticketing.service';
 import { RegisterTicketDto } from './dto/register-ticket.dto';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -7,7 +7,7 @@ import { UpdateMessageDto } from './dto/update-message.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 
 @Controller('ticket')
-@ApiTags('Ticketing')
+@ApiTags('Ticket')
 export class TicketingController {
   constructor(private readonly ticketingService: TicketingService) {}
 
@@ -32,6 +32,18 @@ export class TicketingController {
     return this.ticketingService.createNewMessage(registerMessageDto, ticketId);
   }
 
+  @Post('message/new/:user_uuid')
+  @ApiResponse({
+    status: 200,
+    description: 'message has been created',
+  })
+  registerMessages(
+    @Param('user_uuid') user_uuid: string,
+    @Body() registerMessageDto: registerMessageDto,
+  ) {
+    return this.ticketingService.createNewGLobalMessage(registerMessageDto, user_uuid);
+  }
+
   @Post('message/update')
   @ApiResponse({
     status: 200,
@@ -41,7 +53,7 @@ export class TicketingController {
     return this.ticketingService.updateMessageById(UpdateMessageDto);
   }
 
-  @Post(':ticket_id/update')
+  @Patch(':ticket_id/update')
   @ApiResponse({
     status: 200,
     description: 'ticket as been updated !',

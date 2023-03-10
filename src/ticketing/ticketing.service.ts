@@ -123,21 +123,56 @@ export class TicketingService {
       }
     }
   }
+  async createNewGLobalMessage(
+    registerMessageDto: registerMessageDto,
+    user_uuid: string,
+  ) {
+    try {
 
+      const user = await this.prisma.users.findFirstOrThrow({
+        where: {
+          user_uuid: "413337461071282196",
+        },
+      });
+
+      const message = await this.registerMessage({
+        ...registerMessageDto,
+        message_uuid: registerMessageDto.message_uuid,
+        message_content: registerMessageDto.message_content,
+        users: {
+          connect: {
+            id: user.id,
+          },
+        },
+      });
+
+      return {
+        statusCode: 200,
+        data: message,
+      };
+    } catch (err) {
+      if (err.name != 'NotFoundError') {
+        return err;
+      } else {
+        return {
+          statusCode: 404,
+          message: 'User was not found for save message',
+        };
+      }
+    }
+  }
   async findTicketByMessageUuid(messageWhereInput: Prisma.messagesWhereInput) {
     try {
-      const messageID = await this.prisma.messages.findFirstOrThrow({
+      const message = await this.prisma.messages.findFirstOrThrow({
         where: {
           message_uuid: messageWhereInput.message_uuid,
         },
       });
-
-      const ticket = await this.prisma.ticket.findMany({
+      const ticket = await this.prisma.ticket.findFirstOrThrow({
         where: {
-          id_messages: messageID.id,
+          id: message.id_ticket
         },
       });
-
       return {
         statusCode: 200,
         data: ticket,
