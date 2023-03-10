@@ -1,6 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateSignatureDto } from './dto/create-signature.dto';
-
 import { PrismaService } from '../prisma.service';
 import { UsersService } from '../users/users.service';
 import { courses, Prisma } from '@prisma/client';
@@ -38,19 +37,12 @@ export class SignatureService {
         id_learner: learnerId,
       },
     });
-
-    if (!signatures) {
-      return;
-    }
-    // TODO: check this condition
-
     const now = new Date();
     let morningCount = 0;
     let afternoonCount = 0;
     signatures.forEach((signature) => {
       const start = new Date(signature.created_at);
       start.setHours(0, 0, 0, 0);
-
       const end = new Date(signature.created_at);
       end.setHours(12, 30, 0, 0);
 
@@ -68,7 +60,6 @@ export class SignatureService {
 
   async getPromoUuidByTrainerUuid(trainerUUID) {
     const trainer = await this.users.getUserbyUUID(trainerUUID);
-
     const promosIds = await this.users.getUserPromo(trainer);
     const promos = [];
 
@@ -124,11 +115,9 @@ export class SignatureService {
 
   async getRoleByUserUuid(userId: string) {
     const learner = await this.users.findOne({ user_uuid: userId });
-
     const role = await this.prisma.roles.findFirst({
       where: { id: learner.id_roles },
     });
-
     return role.role_name;
   }
 
@@ -142,7 +131,6 @@ export class SignatureService {
 
   async requestReportStatus(learnerUuid: string): Promise<boolean> {
     const learnerPromo = await this.users.getUserbyUUID(learnerUuid);
-
     const promoId = await this.prisma.promo.findFirst({
       where: { id: learnerPromo.id_promo },
     });
@@ -151,10 +139,29 @@ export class SignatureService {
 
   async hasReport(learnerUuid: string): Promise<boolean> {
     const learner = await this.users.getUserbyUUID(learnerUuid);
+    const now = new Date();
+    const reset = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      12,
+      30,
+      0,
+      0,
+    );
     const signature = await this.prisma.signature.findFirst({
-      where: { id_learner: learner.id },
+      where: {
+        id_learner: learner.id,
+        created_at: {
+          gte: now <= reset ? now : reset,
+          lt:
+            now <= reset
+              ? reset
+              : new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1),
+        },
+      },
     });
-    return !!signature;
+    return Boolean(signature);
   }
 
   async changeStatus(promoId: number): Promise<boolean> {
@@ -168,13 +175,11 @@ export class SignatureService {
         where: { id: promoId },
         data: { code_request: false },
       });
-      console.log('false');
     } else if (promo.code_request === false) {
       await this.prisma.promo.update({
         where: { id: promoId },
         data: { code_request: true },
       });
-      console.log('true');
     }
     return true;
   }

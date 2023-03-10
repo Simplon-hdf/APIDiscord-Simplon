@@ -11,7 +11,7 @@ export class TasksService {
   ) {}
   private readonly logger = new Logger(TasksService.name);
 
-  @Cron(CronExpression.EVERY_30_SECONDS /*EVERY_DAY_AT_1AM*/)
+  @Cron(CronExpression.EVERY_DAY_AT_1AM)
   async handleCron() {
     console.log('change');
     await this.prisma.promo.updateMany({

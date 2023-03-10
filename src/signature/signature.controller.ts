@@ -35,8 +35,8 @@ export class SignatureController {
   }
 
   @Get('/report/:learnerUuid')
-  hasReport(@Param('learnerUuid') learnerUuid: string) {
-    return this.signatureService.hasReport(learnerUuid);
+  async hasReport(@Param('learnerUuid') learnerUuid: string) {
+    return await this.signatureService.hasReport(learnerUuid);
   }
 
   @Get('/codeRequest/changeStatus/:promoUuid')
