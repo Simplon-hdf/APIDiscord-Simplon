@@ -279,4 +279,4 @@ package-lock.json
 
 .idea
 
-/prisma/migrations
+migrations
