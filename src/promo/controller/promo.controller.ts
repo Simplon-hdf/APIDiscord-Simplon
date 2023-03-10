@@ -33,9 +33,15 @@ export class PromoController {
     return this.promoService.getPromo(+id);
   }
 
-  @Get('/state/:state')
-  async getPromoByState(@Param('state') state: string): Promise<promo[]> {
-    return this.promoService.getPromoByState(state.toLowerCase() == 'true');
+  @Get('guild/:uuid/state/:state')
+  async getPromoByState(
+    @Param('state') state: string,
+    @Param('uuid') uuid: string,
+  ): Promise<promo[]> {
+    return this.promoService.getPromoByState(
+      uuid,
+      state.toLowerCase() == 'true',
+    );
   }
 
   @Post('/create')

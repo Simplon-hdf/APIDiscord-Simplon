@@ -70,12 +70,32 @@ export class PromoService {
     }
   }
 
-  async getPromoByState(stateToSearch: boolean): Promise<promo[]> {
-    return await this.prisma.promo.findMany({
-      where: {
-        promo_state: stateToSearch,
-      },
-    });
+  async getPromoByState(uuid: string, stateToSearch: boolean) {
+    try {
+      const guild = await this.prisma.guilds.findFirstOrThrow({
+        where: {
+          guild_uuid: uuid,
+        },
+      });
+
+      return await this.prisma.promo.findMany({
+        where: {
+          promo_state: stateToSearch,
+          AND: {
+            courses: {
+              id_guilds: guild.id,
+            },
+          },
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      if (error.name != 'NotFoundError') {
+        return error;
+      } else {
+        return "This promo can't be created, check fields";
+      }
+    }
   }
   // Func
 
