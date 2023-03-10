@@ -11,7 +11,6 @@ import { ChannelsService } from './channels.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { DeleteChannelDto } from './dto/delete-channel.dto';
 
 @Controller('channels')
 @ApiTags('Channels')
@@ -23,9 +22,14 @@ export class ChannelsController {
     return await this.channelsService.registerChannel(createChannelDto);
   }
 
-  @Delete('delete')
-  async deleteChannel(@Body() deleteChannelDto: DeleteChannelDto) {
-    return await this.channelsService.deleteChannel(deleteChannelDto);
+  @Get('guilds/:uuid')
+  async getChannelByGuildUUID(@Param('uuid') uuid: string) {
+    return await this.channelsService.getChannelByGuildUUID(uuid);
+  }
+
+  @Delete('delete/:uuid')
+  async deleteChannel(@Param('uuid') uuid: string) {
+    return await this.channelsService.deleteChannel(uuid);
   }
 
   @Patch('update/name')

@@ -3,7 +3,6 @@ import { CreateChannelDto } from './dto/create-channel.dto';
 import { PrismaService } from '../prisma.service';
 import { channels, Prisma } from '@prisma/client';
 import { UpdateChannelDto } from './dto/update-channel.dto';
-import { DeleteChannelDto } from './dto/delete-channel.dto';
 
 @Injectable()
 export class ChannelsService {
@@ -31,6 +30,17 @@ export class ChannelsService {
     return await this.findOne({
       channel_uuid: uuid,
     });
+  }
+
+  async getChannelByGuildUUID(uuid: string) {
+    return {
+      statusCode: HttpStatus.OK,
+      data: await this.findMany({
+        guilds: {
+          guild_uuid: uuid,
+        },
+      }),
+    };
   }
 
   async registerChannel(createChannelDto: CreateChannelDto) {
@@ -122,12 +132,9 @@ export class ChannelsService {
     };
   }
 
-  async deleteChannel(deleteChannelDto: DeleteChannelDto) {
+  async deleteChannel(uuid: string) {
     const channel = await this.findOne({
-      channel_uuid: deleteChannelDto.channel_uuid,
-      guilds: {
-        guild_uuid: deleteChannelDto.guild_uuid,
-      },
+      channel_uuid: uuid,
     });
 
     if (!channel) {

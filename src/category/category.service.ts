@@ -13,8 +13,14 @@ export class CategoryService {
     });
   }
 
-  categories(): Promise<category[]> {
-    return this.prisma.category.findMany();
+  categories(
+    categoryWhereInput: Prisma.categoryWhereInput,
+  ): Promise<category[]> {
+    return this.prisma.category.findMany({
+      where: {
+        ...categoryWhereInput,
+      },
+    });
   }
 
   category(categoryWhereInput: Prisma.categoryWhereInput): Promise<category> {
@@ -56,7 +62,7 @@ export class CategoryService {
   }
 
   async getCategoryByGuild(guildUUID: string) {
-    const category = await this.category({
+    const category = await this.categories({
       guilds: {
         guild_uuid: guildUUID,
       },
