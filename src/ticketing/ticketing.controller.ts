@@ -44,7 +44,7 @@ export class TicketingController {
     return this.ticketingService.createNewGLobalMessage(registerMessageDto, user_uuid);
   }
 
-  @Post('message/update')
+  @Patch('message/update')
   @ApiResponse({
     status: 200,
     description: 'ticket as been created !',
