@@ -9,7 +9,7 @@ async function bootstrap() {
   };
   app.setGlobalPrefix('api');
 
-  const config = new DocumentBuilder().build();
+  const config = new DocumentBuilder().setBasePath('api').build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 

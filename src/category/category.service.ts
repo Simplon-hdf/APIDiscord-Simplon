@@ -41,6 +41,12 @@ export class CategoryService {
       };
     }
 
+    const guild = await this.prisma.guilds.findFirst({
+      where: {
+        guild_uuid: createCategoryDto.guild_uuid,
+      },
+    });
+
     return {
       statusCode: HttpStatus.CREATED,
       data: await this.create({
@@ -48,7 +54,7 @@ export class CategoryService {
         category_name: createCategoryDto.category_name,
         guilds: {
           connect: {
-            id: createCategoryDto.guilds_id,
+            id: guild.id,
           },
         },
       }),

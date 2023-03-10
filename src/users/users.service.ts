@@ -3,6 +3,7 @@ import { guilds, Prisma, users } from '@prisma/client';
 import { PrismaService } from '../prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { GuildsService } from '../guilds/guilds.service';
+import { DeleteUserDto } from './dto/delete-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -73,11 +74,14 @@ export class UsersService {
     });
   }
 
-  async getUserGuild(user_uuid: string): Promise<guilds[] | null> {
+  async getUser(user_uuid: string) {
     const users = await this.getUsersByUUID(user_uuid);
 
     if (users === null) {
-      return null;
+      return {
+        statusCode: HttpStatus.NOT_FOUND,
+        error: 'Users not found',
+      };
     }
 
     const appartenir = await this.prisma.appartenir.findMany({
@@ -102,16 +106,73 @@ export class UsersService {
     return guilds;
   }
 
+  async deleteUser(deleteUserDto: DeleteUserDto) {
+    const user = await this.getUsersByUUID(deleteUserDto.user_uuid);
+
+    if (user === null) {
+      return {
+        statusCode: HttpStatus.NOT_FOUND,
+        error: 'User not found',
+      };
+    }
+
+    const appartenir = await this.prisma.appartenir.findFirst({
+      where: {
+        users: {
+          id: user.id,
+        },
+        AND: {
+          guilds: {
+            guild_uuid: deleteUserDto.guild_uuid,
+          },
+        },
+      },
+    });
+
+    if (appartenir === null) {
+      return {
+        statusCode: HttpStatus.NOT_FOUND,
+        error: 'User not found in guild',
+      };
+    }
+
+    await this.prisma.appartenir.delete({
+      where: {
+        id_id_guilds: appartenir,
+      },
+    });
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: 'User deleted',
+    };
+  }
+
   async createUser(createUserDto: CreateUserDto) {
     const user = await this.findOne({
       user_uuid: createUserDto.user_uuid,
     });
 
     if (user !== null) {
-      return {
-        statusCode: HttpStatus.CONFLICT,
-        error: 'User already exist',
-      };
+      const appartenir = await this.prisma.appartenir.findFirst({
+        where: {
+          guilds: {
+            id: createUserDto.id_guilds,
+          },
+          AND: {
+            users: {
+              id: user.id,
+            },
+          },
+        },
+      });
+
+      if (appartenir !== null) {
+        return {
+          statusCode: HttpStatus.CONFLICT,
+          error: 'User already exist',
+        };
+      }
     }
 
     const newUser = await this.create({
@@ -144,5 +205,15 @@ export class UsersService {
       statusCode: HttpStatus.OK,
       data: newUser,
     };
+  }
+
+  getUserByGuildUUID(guild: string) {
+    const users = this.prisma.users.findMany({
+      where: {
+        guilds: {
+          guild_uuid: guild,
+        },
+      },
+    });
   }
 }
