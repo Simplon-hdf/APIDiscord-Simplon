@@ -65,4 +65,33 @@ export class UsersService {
 
     return newUser;
   }
+
+  async findUserTicketByStatusIdle(userWhereInput: Prisma.usersWhereInput) {
+    try {
+
+      const ticket = await this.prisma.ticket.findFirstOrThrow({
+        where:{
+          users:{
+            user_uuid: userWhereInput.user_uuid
+          },
+          ticket_state: "IDLE"
+        }
+      })
+
+      return{
+        statusCode: 200,
+        data:ticket
+      }
+
+    } catch (err) {
+      if (err.name != 'NotFoundError') {
+        return err;
+      } else {
+        return {
+          statusCode: 404,
+          message: 'Ticket not found',
+        };
+      }
+    }
+  }
 }
