@@ -13,10 +13,22 @@ services:
       - '5432:5432'
     networks:
       - postgres-network
+  redis:
+    image: redis:6.2.6
+    restart: always
+    ports:
+      - '6379:6379'
+    networks:
+       - postgres-network
+    command: redis-server --requirepass strong
+    volumes:
+      - cache:/data
 
 
 volumes:
   postgres:
+  cache:
+    driver: local
 
 networks:
   postgres-network:
