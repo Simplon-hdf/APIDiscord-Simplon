@@ -1,0 +1,250 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model appartenir {
+  id        Int
+  id_guilds Int
+  guilds    guilds @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "appartenir_guilds0_fk")
+  users     users  @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "appartenir_users_fk")
+
+  @@id([id, id_guilds], map: "appartenir_pk")
+}
+
+model associer {
+  id          Int
+  id_channels Int
+  channels    channels @relation(fields: [id_channels], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "associer_channels0_fk")
+  template    template @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "associer_template_fk")
+
+  @@id([id, id_channels], map: "associer_pk")
+}
+
+model category {
+  id            Int             @id(map: "category_pk") @default(autoincrement())
+  id_guilds     Int
+  category_uuid String
+  category_name String          @db.VarChar(255)
+  guilds        guilds          @relation(fields: [id_guilds], references: [id], map: "organiser_guilds_fk")
+  channels      channels[]
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
+  channelsStock channelsStock[]
+}
+
+model channels {
+  id                Int                 @id(map: "channels_pk") @default(autoincrement())
+  channel_name      String              @db.VarChar(255)
+  channel_uuid      String              @unique
+  id_guilds         Int
+  id_category       Int?
+  associer          associer[]
+  category          category?           @relation(fields: [id_category], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channels_category0_fk")
+  guilds            guilds              @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channels_guilds_fk")
+  inclure           inclure[]
+  resources_sharing resources_sharing[]
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
+  define            define[]
+}
+
+model config {
+  id      Int       @id(map: "config_pk") @default(autoincrement())
+  config  String    @db.VarChar(2000)
+  guilds  guilds[]
+  courses courses[]
+}
+
+model courses {
+  id          Int        @id(map: "courses_pk") @default(autoincrement())
+  course_name String     @db.VarChar(255)
+  id_roles    Int
+  id_guilds   Int
+  id_config   Int?
+  config      config?    @relation(fields: [id_config], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_config_fk")
+  roles       roles      @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_roles_fk")
+  guilds      guilds?    @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_guilds_fk")
+  promo       promo[]
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  template    template[]
+}
+
+model guilds {
+  id            Int             @id(map: "guilds_pk") @default(autoincrement())
+  guild_uuid    String
+  guild_name    String          @db.VarChar(50)
+  member_size   Int
+  config_id     Int?
+  config        config?         @relation(fields: [config_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "guilds_config_fk")
+  appartenir    appartenir[]
+  channels      channels[]
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
+  courses       courses[]
+  category      category[]
+  roles         roles[]
+  channelsStock channelsStock[]
+  users         users[]
+}
+
+model inclure {
+  id          Int
+  id_channels Int
+  channels    channels @relation(fields: [id_channels], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "inclure_channels0_fk")
+  messages    messages @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "inclure_messages_fk")
+
+  @@id([id, id_channels], map: "inclure_pk")
+}
+
+model link {
+  id         Int      @id(map: "link_pk") @default(autoincrement())
+  link       String   @db.VarChar(50)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model messages {
+  id              Int       @id(map: "messages_pk") @default(autoincrement())
+  message_uuid    String
+  message_content String    @db.VarChar(255)
+  id_users        Int
+  id_ticket       Int?
+  inclure         inclure[]
+  ticket          ticket?   @relation(fields: [id_ticket], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users           users     @relation(fields: [id_users], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "messages_users_fk")
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+}
+
+model promo {
+  id           Int          @id(map: "promo_pk") @default(autoincrement())
+  promo_state  Boolean
+  code_request Boolean      @default(true)
+  id_courses   Int
+  id_roles     Int
+  courses      courses      @relation(fields: [id_courses], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "promo_courses_fk")
+  roles        roles        @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "promo_roles0_fk")
+  created_at   DateTime     @default(now())
+  updated_at   DateTime     @updatedAt
+  Participer   Participer[]
+  users        users[]
+}
+
+model resources_sharing {
+  id          Int      @id(map: "resources_sharing_pk") @default(autoincrement())
+  up_vote     Int
+  down_vote   Int
+  id_channels Int
+  id_users    Int
+  channels    channels @relation(fields: [id_channels], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "resources_sharing_channels_fk")
+  users       users    @relation(fields: [id_users], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "resources_sharing_users0_fk")
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model roles {
+  id         Int       @id(map: "roles_pk") @default(autoincrement())
+  role_uuid  String
+  role_name  String    @db.VarChar(255)
+  role_color String    @db.VarChar(20)
+  id_guilds  Int
+  guilds     guilds    @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "guilds_stock_roles")
+  courses    courses[]
+  promo      promo[]
+  ticket     ticket[]
+  users      users[]
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+}
+
+model signature {
+  id               Int      @id(map: "signature_pk") @default(autoincrement())
+  id_learner       Int?
+  learner          users?   @relation(fields: [id_learner], references: [id], name: "learner", map: "learner_pk")
+  id_trainer       Int?
+  trainer_notifier users?   @relation(fields: [id_trainer], references: [id], name: "trainer", map: "trainer_pk")
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+}
+
+model template {
+  id         Int        @id(map: "template_pk") @default(autoincrement())
+  associer   associer[]
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  id_courses Int
+  courses    courses    @relation(fields: [id_courses], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "template_courses_fk")
+}
+
+model ticket {
+  id           Int        @id(map: "ticket_pk") @default(autoincrement())
+  ticket_tag   String     @db.VarChar(255)
+  ticket_state String
+  id_roles     Int
+  id_users     Int
+  id_messages  Int?
+  roles        roles      @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ticket_roles0_fk")
+  users        users      @relation(fields: [id_users], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ticket_users1_fk")
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
+  messages     messages[]
+}
+
+model users {
+  id                Int                 @id(map: "users_pk") @default(autoincrement())
+  username          String              @db.VarChar(255)
+  mail              String              @db.VarChar(255)
+  user_uuid         String
+  id_roles          Int
+  id_promo          Int?
+  appartenir        appartenir[]
+  messages          messages[]
+  resources_sharing resources_sharing[]
+  ticket            ticket[]
+  promo             promo?              @relation(fields: [id_promo], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_promo0_fk")
+  roles             roles               @relation(fields: [id_roles], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_roles_fk")
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
+  signature_trainer signature[]         @relation("learner")
+  signature_learner signature[]         @relation("trainer")
+  Participer        Participer[]
+  guilds            guilds?             @relation(fields: [guildsId], references: [id])
+  guildsId          Int?
+}
+
+model channelsStock {
+  id          Int      @id(map: "channelsStock_pk") @default(autoincrement())
+  id_guilds   Int
+  id_category Int
+  guilds      guilds   @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channelsStock_guilds_fk")
+  category    category @relation(fields: [id_category], references: [id], map: "channelsStock_category_fk")
+  define      define[]
+}
+
+model define {
+  id               Int
+  id_channelsStock Int
+
+  channels      channels      @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "define_channels_fk")
+  channelsStock channelsStock @relation(fields: [id_channelsStock], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "define_channelsStock_fk")
+
+  @@id([id, id_channelsStock])
+  @@map("define")
+}
+
+model Participer {
+  id       Int
+  id_promo Int
+
+  user  users @relation(fields: [id], references: [id])
+  promo promo @relation(fields: [id_promo], references: [id])
+
+  @@id([id, id_promo])
+  @@map("Participer")
+}
