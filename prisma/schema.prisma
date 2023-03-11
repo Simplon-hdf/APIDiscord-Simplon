@@ -40,7 +40,7 @@ model category {
 model channels {
   id                Int                 @id(map: "channels_pk") @default(autoincrement())
   channel_name      String              @db.VarChar(255)
-  channel_uuid      String
+  channel_uuid      String              @unique
   id_guilds         Int
   id_category       Int?
   associer          associer[]
@@ -185,7 +185,7 @@ model template {
 model ticket {
   id           Int        @id(map: "ticket_pk") @default(autoincrement())
   ticket_tag   String     @db.VarChar(255)
-  ticket_state Boolean
+  ticket_state String
   id_roles     Int
   id_users     Int
   id_messages  Int?

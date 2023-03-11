@@ -3,5 +3,5 @@ export class CreateChannelDto {
   channel_uuid: string;
   id_guilds: number;
 
-  id_category?: number;
+  category_uuid?: string;
 }

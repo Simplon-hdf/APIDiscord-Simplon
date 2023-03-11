@@ -18,7 +18,22 @@ export class ChannelsController {
   constructor(private readonly channelsService: ChannelsService) {}
 
   @Post('register')
-  registerChannel(@Body() createChannelDto: CreateChannelDto) {
-    return this.channelsService.registerChannel(createChannelDto);
+  async registerChannel(@Body() createChannelDto: CreateChannelDto) {
+    return await this.channelsService.registerChannel(createChannelDto);
+  }
+
+  @Get('guilds/:uuid')
+  async getChannelByGuildUUID(@Param('uuid') uuid: string) {
+    return await this.channelsService.getChannelByGuildUUID(uuid);
+  }
+
+  @Delete('delete/:uuid')
+  async deleteChannel(@Param('uuid') uuid: string) {
+    return await this.channelsService.deleteChannel(uuid);
+  }
+
+  @Patch('update/name')
+  async updateChannelName(@Body() updateChannelDto: UpdateChannelDto) {
+    return await this.channelsService.updateChannelName(updateChannelDto);
   }
 }
