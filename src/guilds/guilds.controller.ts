@@ -22,7 +22,7 @@ export class GuildsController {
     return this.guildsService.createGuilds(createGuildDto);
   }
 
-  @Get('/guilds')
+  @Get()
   getGuilds() {
     return this.guildsService.findAll();
   }
@@ -30,5 +30,10 @@ export class GuildsController {
   @Get(':uuid')
   getGuild(@Param('uuid') uuid: string) {
     return this.guildsService.getGuildByUUID(uuid);
+  }
+
+  @Delete('delete/:uuid')
+  deleteGuild(@Param('uuid') uuid: string) {
+    return this.guildsService.deleteGuilds(uuid);
   }
 }

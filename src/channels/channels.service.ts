@@ -55,7 +55,18 @@ export class ChannelsService {
       };
     }
 
-    let response;
+    const guild = await this.prisma.guilds.findFirst({
+      where: {
+        guild_uuid: createChannelDto.guild_uuid,
+      },
+    });
+
+    if (!guild) {
+      return {
+        statusCode: HttpStatus.NOT_FOUND,
+        error: 'Guild not found',
+      };
+    }
 
     if (createChannelDto.category_uuid === undefined) {
       return {
@@ -65,7 +76,7 @@ export class ChannelsService {
           channel_name: createChannelDto.channel_name,
           guilds: {
             connect: {
-              id: createChannelDto.id_guilds,
+              id: guild.id,
             },
           },
         }),
@@ -92,7 +103,7 @@ export class ChannelsService {
         channel_name: createChannelDto.channel_name,
         guilds: {
           connect: {
-            id: createChannelDto.id_guilds,
+            id: guild.id,
           },
         },
         category: {

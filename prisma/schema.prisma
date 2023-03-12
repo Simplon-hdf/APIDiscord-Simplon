@@ -10,7 +10,7 @@ datasource db {
 model appartenir {
   id        Int
   id_guilds Int
-  guilds    guilds @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "appartenir_guilds0_fk")
+  guilds    guilds @relation(fields: [id_guilds], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "appartenir_guilds0_fk")
   users     users  @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "appartenir_users_fk")
 
   @@id([id, id_guilds], map: "appartenir_pk")
@@ -30,7 +30,7 @@ model category {
   id_guilds     Int
   category_uuid String
   category_name String          @db.VarChar(255)
-  guilds        guilds          @relation(fields: [id_guilds], references: [id], map: "organiser_guilds_fk")
+  guilds        guilds          @relation(fields: [id_guilds], references: [id], onDelete: Cascade, map: "organiser_guilds_fk")
   channels      channels[]
   created_at    DateTime        @default(now())
   updated_at    DateTime        @updatedAt
@@ -45,7 +45,7 @@ model channels {
   id_category       Int?
   associer          associer[]
   category          category?           @relation(fields: [id_category], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channels_category0_fk")
-  guilds            guilds              @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channels_guilds_fk")
+  guilds            guilds              @relation(fields: [id_guilds], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "channels_guilds_fk")
   inclure           inclure[]
   resources_sharing resources_sharing[]
   created_at        DateTime            @default(now())
@@ -81,7 +81,7 @@ model guilds {
   guild_name    String          @db.VarChar(50)
   member_size   Int
   config_id     Int?
-  config        config?         @relation(fields: [config_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "guilds_config_fk")
+  config        config?         @relation(fields: [config_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "guilds_config_fk")
   appartenir    appartenir[]
   channels      channels[]
   created_at    DateTime        @default(now())
@@ -154,7 +154,7 @@ model roles {
   role_name  String    @db.VarChar(255)
   role_color String    @db.VarChar(20)
   id_guilds  Int
-  guilds     guilds    @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "guilds_stock_roles")
+  guilds     guilds    @relation(fields: [id_guilds], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "guilds_stock_roles")
   courses    courses[]
   promo      promo[]
   ticket     ticket[]
@@ -214,7 +214,7 @@ model users {
   signature_trainer signature[]         @relation("learner")
   signature_learner signature[]         @relation("trainer")
   Participer        Participer[]
-  guilds            guilds?             @relation(fields: [guildsId], references: [id])
+  guilds            guilds?             @relation(fields: [guildsId], references: [id], onDelete: Cascade)
   guildsId          Int?
 }
 
@@ -222,7 +222,7 @@ model channelsStock {
   id          Int      @id(map: "channelsStock_pk") @default(autoincrement())
   id_guilds   Int
   id_category Int
-  guilds      guilds   @relation(fields: [id_guilds], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channelsStock_guilds_fk")
+  guilds      guilds   @relation(fields: [id_guilds], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "channelsStock_guilds_fk")
   category    category @relation(fields: [id_category], references: [id], map: "channelsStock_category_fk")
   define      define[]
 }

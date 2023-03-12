@@ -60,6 +60,28 @@ export class GuildsService {
     };
   }
 
+  async deleteGuilds(uuid: string) {
+    const guilds = await this.findOne({
+      guild_uuid: uuid,
+    });
+
+    if (guilds === null) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Guilds not exist',
+      };
+    }
+
+    await this.remove({
+      id: guilds.id,
+    });
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: 'Guilds deleted',
+    };
+  }
+
   async getGuildByUUID(uuid: string) {
     const guild = await this.findOne({
       guild_uuid: uuid,
@@ -67,7 +89,7 @@ export class GuildsService {
 
     if (guild === null) {
       return {
-        statusCode: HttpStatus.CONFLICT,
+        statusCode: HttpStatus.NOT_FOUND,
         error: 'Guild not exist',
       };
     }
