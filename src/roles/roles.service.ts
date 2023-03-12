@@ -53,6 +53,15 @@ export class RolesService {
       };
     }
 
+    const guilds = await this.guilds.getGuildByUUID(createDtoRole.guild_uuid);
+
+    if (guilds.statusCode === HttpStatus.CONFLICT) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Guild not found',
+      };
+    }
+
     return {
       statusCode: HttpStatus.OK,
       data: await this.create({
@@ -61,7 +70,7 @@ export class RolesService {
         role_name: createDtoRole.role_name,
         guilds: {
           connect: {
-            id: createDtoRole.guilds_id,
+            id: guilds.data.id,
           },
         },
       }),
