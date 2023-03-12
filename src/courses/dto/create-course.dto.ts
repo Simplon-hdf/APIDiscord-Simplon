@@ -1,5 +1,5 @@
 export class CreateCourseDto {
   course_name: string;
-  role_id: number;
-  guild_id: number;
+  role_uuid: string;
+  guild_uuid: string;
 }

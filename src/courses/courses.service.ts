@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma.service';
 import { courses, Prisma } from '@prisma/client';
 import { GuildsService } from '../guilds/guilds.service';
 import { UsersService } from '../users/users.service';
+import { RolesService } from '../roles/roles.service';
 
 @Injectable()
 export class CoursesService {
@@ -12,6 +13,7 @@ export class CoursesService {
     private readonly prisma: PrismaService,
     private readonly guilds: GuildsService,
     private readonly users: UsersService,
+    private readonly roles: RolesService,
   ) {}
   create(data: Prisma.coursesCreateInput): Promise<courses> {
     return this.prisma.courses.create({
@@ -38,6 +40,11 @@ export class CoursesService {
   async createCourse(createCoursesDto: CreateCourseDto) {
     const course = await this.findOne({
       course_name: createCoursesDto.course_name,
+      AND: {
+        guilds: {
+          guild_uuid: createCoursesDto.guild_uuid,
+        },
+      },
     });
 
     if (course !== null) {
@@ -47,18 +54,33 @@ export class CoursesService {
       };
     }
 
+    const role = await this.roles.role({
+      role_uuid: createCoursesDto.role_uuid,
+    });
+
+    if (role === null) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        error: 'Role not exist',
+      };
+    }
+
+    const guild = await this.guilds.findOne({
+      guild_uuid: createCoursesDto.guild_uuid,
+    });
+
     return {
       statusCode: HttpStatus.OK,
       data: await this.create({
         course_name: createCoursesDto.course_name,
         roles: {
           connect: {
-            id: createCoursesDto.role_id,
+            id: role.id,
           },
         },
         guilds: {
           connect: {
-            id: createCoursesDto.guild_id,
+            id: guild.id,
           },
         },
       }),
