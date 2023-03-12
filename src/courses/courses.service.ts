@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { PrismaService } from '../prisma.service';
@@ -13,6 +13,7 @@ export class CoursesService {
     private readonly prisma: PrismaService,
     private readonly guilds: GuildsService,
     private readonly users: UsersService,
+    @Inject(forwardRef(() => RolesService))
     private readonly roles: RolesService,
   ) {}
   create(data: Prisma.coursesCreateInput): Promise<courses> {
@@ -38,53 +39,53 @@ export class CoursesService {
   }
 
   async createCourse(createCoursesDto: CreateCourseDto) {
-    const course = await this.findOne({
-      course_name: createCoursesDto.course_name,
-      AND: {
-        guilds: {
-          guild_uuid: createCoursesDto.guild_uuid,
-        },
-      },
-    });
-
-    if (course !== null) {
-      return {
-        statusCode: HttpStatus.CONFLICT,
-        error: 'Courses already exist',
-      };
-    }
-
-    const role = await this.roles.role({
-      role_uuid: createCoursesDto.role_uuid,
-    });
-
-    if (role === null) {
-      return {
-        statusCode: HttpStatus.CONFLICT,
-        error: 'Role not exist',
-      };
-    }
-
-    const guild = await this.guilds.findOne({
-      guild_uuid: createCoursesDto.guild_uuid,
-    });
-
-    return {
-      statusCode: HttpStatus.OK,
-      data: await this.create({
-        course_name: createCoursesDto.course_name,
-        roles: {
-          connect: {
-            id: role.id,
-          },
-        },
-        guilds: {
-          connect: {
-            id: guild.id,
-          },
-        },
-      }),
-    };
+    // const course = await this.findOne({
+    //   course_name: createCoursesDto.course_name,
+    //   AND: {
+    //     guilds: {
+    //       guild_uuid: createCoursesDto.guild_uuid,
+    //     },
+    //   },
+    // });
+    //
+    // if (course !== null) {
+    //   return {
+    //     statusCode: HttpStatus.CONFLICT,
+    //     error: 'Courses already exist',
+    //   };
+    // }
+    //
+    // const role = await this.roles.role({
+    //   role_uuid: createCoursesDto.role_uuid,
+    // });
+    //
+    // if (role === null) {
+    //   return {
+    //     statusCode: HttpStatus.CONFLICT,
+    //     error: 'Role not exist',
+    //   };
+    // }
+    //
+    // const guild = await this.guilds.findOne({
+    //   guild_uuid: createCoursesDto.guild_uuid,
+    // });
+    //
+    // return {
+    //   statusCode: HttpStatus.OK,
+    //   data: await this.create({
+    //     course_name: createCoursesDto.course_name,
+    //     roles: {
+    //       connect: {
+    //         id: role.id,
+    //       },
+    //     },
+    //     guilds: {
+    //       connect: {
+    //         id: guild.id,
+    //       },
+    //     },
+    //   }),
+    // };
   }
 
   async getCoursesByGuild(guild_uuid: string) {

@@ -7,16 +7,11 @@ import { CategoryService } from '../category/category.service';
 import { CoursesService } from '../courses/courses.service';
 import { ChannelsService } from '../channels/channels.service';
 import { UsersService } from '../users/users.service';
+import { RolesService } from '../roles/roles.service';
 
 @Module({
   controllers: [GuildsController],
-  providers: [
-    GuildsService,
-    PrismaService,
-    CategoryService,
-    CoursesService,
-    ChannelsService,
-    UsersService,
-  ],
+  providers: [GuildsService, PrismaService],
+  exports: [GuildsService],
 })
 export class GuildsModule {}

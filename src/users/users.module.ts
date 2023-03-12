@@ -7,5 +7,6 @@ import { GuildsService } from '../guilds/guilds.service';
 @Module({
   controllers: [UsersController],
   providers: [UsersService, PrismaService, GuildsService],
+  exports: [UsersService],
 })
 export class UsersModule {}

@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { PrismaService } from '../prisma.service';
 import { Prisma, roles } from '@prisma/client';
@@ -9,6 +9,8 @@ import { GuildsService } from '../guilds/guilds.service';
 export class RolesService {
   constructor(
     private readonly prisma: PrismaService,
+
+    @Inject(forwardRef(() => CoursesService))
     private readonly courses: CoursesService,
     private readonly guilds: GuildsService,
   ) {}
