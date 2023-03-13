@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma.service';
 import { Prisma, roles } from '@prisma/client';
 import { CoursesService } from '../courses/courses.service';
 import { GuildsService } from '../guilds/guilds.service';
+import { UpdateRoleDto } from './dto/update-role.dto';
 
 @Injectable()
 export class RolesService {
@@ -136,5 +137,51 @@ export class RolesService {
         guild_uuid: uuid,
       },
     });
+  }
+
+  async deleteRoleByUUID(uuid: string) {
+    const role = await this.getRoleByUUID(uuid);
+
+    if (role.statusCode === HttpStatus.CONFLICT) {
+      return role;
+    }
+
+    return this.prisma.roles.delete({
+      where: {
+        id: role.data.id,
+      },
+    });
+  }
+
+  async updateRoleByUUID(updateRoleDto: UpdateRoleDto) {
+    const role = await this.getRoleByUUID(updateRoleDto.role_uuid);
+
+    if (role.statusCode === HttpStatus.CONFLICT) {
+      return role;
+    }
+
+    if (updateRoleDto.role_name !== undefined) {
+      this.prisma.roles.update({
+        where: {
+          id: role.data.id,
+        },
+        data: {
+          role_name: updateRoleDto.role_name,
+        },
+      });
+    }
+
+    if (updateRoleDto.role_color !== undefined) {
+      this.prisma.roles.update({
+        where: {
+          id: role.data.id,
+        },
+        data: {
+          role_color: updateRoleDto.role_color,
+        },
+      });
+    }
+
+    return this.getRoleByUUID(updateRoleDto.role_uuid);
   }
 }
