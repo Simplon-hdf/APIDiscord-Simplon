@@ -132,11 +132,18 @@ export class RolesService {
       return guild;
     }
 
-    return await this.findMany({
+    const roles = await this.findMany({
       guilds: {
         guild_uuid: uuid,
       },
     });
+
+    return roles.length === 0
+      ? {
+          statusCode: HttpStatus.OK,
+          data: [],
+        }
+      : roles;
   }
 
   async deleteRoleByUUID(uuid: string) {
